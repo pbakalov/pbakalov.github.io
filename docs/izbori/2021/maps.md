@@ -16,7 +16,12 @@
 
 <a href='./../../assets/spad_bsp_map.html'><img src='./../../assets/spad_bsp_map.png' width="250"></a>
 
-<!---
+## Републиканци за България
+[Таблица](./../../assets/2021/spadove/rbg.html) с населените места със спад над 50% в подркепата за Републиканци за БГ през юли 2021 спрямо април 2021 и поне 50 гласа през април.
+
+<a href='./../../assets/spad_rbg_map.html'><img src='./../../assets/spad_rbg_map.png' width="250"></a>
+
+<!--
 ## ИТН
 ![спадове ИТН](./../../assets/itn_spad_karta.png)
 

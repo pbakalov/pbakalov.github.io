@@ -23,8 +23,10 @@
 ## [Населени места с големи спадове в подкрепата за отделни партии](./maps.md)
 <a href='./maps.html'><img src='./../../assets/spad_gerb_map.png' width="250"></a>
 
-<!--
 ## [Бедни/ромски махали](./mahali.md)
+<a href='./../../assets/2021/spadove/mahali/mahali.html'><img src='./../../assets/2021/spadove/mahali/mahali.png' width="800"></a>
+
+<!--
 ## [Населени места с много висока активност](./aktivnost.md)
 ## [Населени места с много висока подкрепа за ГЕРБ/ДПС](./feodalni.md)
 -->

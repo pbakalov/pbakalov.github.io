@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Choropleth Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+	<style>#map { width: 1200; height: 900px; }
+.info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; background: rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; } .info h4 { margin: 0 0 5px; color: #777; }
+.legend { text-align: left; line-height: 18px; color: #555; } .legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }</style>
+</head>
+</head>
+<body>
+    <div id="map" ></div>
+    <select id="csvDropdown">
+        <option value="../../assets/data/data_apr21_pct.csv">Април 2021</option>
+        <option value="../../assets/data/data_jul21_pct.csv">Юли 2021</option>
+        <option value="../../assets/data/data_nov21_pct.csv">Ноември 2021</option>
+        <option value="../../assets/data/data_oct22_pct.csv">Октомври 2022</option>
+        <option value="../../assets/data/data_apr23_pct.csv" selected>Април 2023</option>
+    </select> <br>
+    <select id="columnsDropdown"></select>
+</body>
+</html>
+
+<script type='text/javascript'>
+    let csvData;
+    let geojsonData;
+    
+    document.getElementById("csvDropdown").addEventListener("change", function(event) {
+        loadCSV(event).then(populateDropdown);
+    });
+
+    loadGeoJSON().then(initializeMap);
+
+    function loadCSV(event) {
+        const csvFilename = event.target.value;
+    
+        return new Promise((resolve, reject) => {
+            Papa.parse(csvFilename, {
+                download: true,
+                header: true,
+                dynamicTyping: true,
+                complete: (result) => {
+                    csvData = result.data;
+                    resolve(result);  
+                },
+                error: (error) => {
+                    reject(error); 
+                }
+            });
+        });
+    }
+    
+    function loadGeoJSON() {
+      return fetch("../../assets/data/settlements_simplified1pct.json")
+        .then((response) => response.json())
+        .then((data) => {
+          geojsonData = data;
+          return loadCSV({ target: { value: "../../assets/data/data_apr23_pct.csv" } }); 
+        });
+    }
+
+    function matchData(columnName) {
+      geojsonData.features.forEach((feature) => {
+        const match = csvData.find((row) => ('00000' + row.id).slice(-5) === feature.properties.ncode); 
+        if (match) {
+          feature.properties[columnName] = match[columnName];
+          feature.properties['total'] = match['total']; 
+        }
+      });
+    }
+
+	function getColor(d) {
+		return d > .8 ? '#800026' :
+			d > .7  ? '#BD0026' :
+			d > .6  ? '#E31A1C' :
+			d > .4  ? '#FC4E2A' :
+			d > .2   ? '#FD8D3C' :
+			d > .1   ? '#FEB24C' :
+			d > .05   ? '#FED976' : '#FFEDA0';
+	}
+
+	function style(feature) {
+		return {
+			weight: 2,
+			opacity: 1,
+			color: 'white',
+			dashArray: '3',
+			fillOpacity: 0.7,
+            fillColor: getColor(feature.properties[selectedColumn]),
+		};
+	}
+
+	function highlightFeature(e) {
+		var layer = e.target;
+
+		layer.setStyle({
+			weight: 5,
+			color: '#666',
+			dashArray: '',
+			fillOpacity: 0.7
+		});
+
+		if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+			layer.bringToFront();
+		}
+
+		info.update(layer.feature.properties, selectedColumn);
+	}
+
+	function zoomToFeature(e) {
+		map.fitBounds(e.target.getBounds());
+	}
+
+
+	function resetHighlight(e) {
+		geojsonLayer.resetStyle(e.target);
+		info.update(undefined, selectedColumn);
+	}
+
+	function onEachFeature(feature, layer) {
+		layer.on({
+			mouseover: highlightFeature,
+			mouseout: resetHighlight,
+			click: zoomToFeature
+		});
+	}
+
+    let map;
+    let geojsonLayer;
+	var info = L.control();
+    
+    function initializeMap() {
+	  map = L.map('map').setView([42.934, 25.938], 8);
+    
+	  var tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	  	maxZoom: 19,
+	  	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>|<a href="https://twitter.com/petar_baka">petar_baka</a>'
+	  }).addTo(map);
+
+      geojsonLayer = L.geoJson(geojsonData, {
+       	style: style,
+      	onEachFeature: onEachFeature
+      }).addTo(map);
+
+	  info.onAdd = function (map) {
+	  	this._div = L.DomUtil.create('div', 'info');
+	  	this.update();
+	  	return this._div;
+	  };
+
+	  info.update = function (props, selectedColumn) {
+        var selectedYear = document.getElementById('csvDropdown');
+        var selectedYearText = selectedYear.options[selectedYear.selectedIndex].textContent;;
+        var table = ''; 
+        if (props) {
+            table = generateTableHtmlForRowById(props.ncode);
+        }
+
+	  	this._div.innerHTML = '<h4>Резултати ' + selectedColumn + ' (' + selectedYearText + ')</h4>'+  
+            (
+                props ? '<b>' + props.name + ' (' + props.ncode + ')</b><br/>' +  
+                selectedColumn + ' гласове: ' +  Math.round(props[selectedColumn]*props['total']) + 
+                ` пропорция ${isNaN(props[selectedColumn]) ? props[selectedColumn] : props[selectedColumn].toFixed(2)}<br>` + 
+                table + '<br> Общо: ' +  props['total'] : 'Посочете населено место.'
+            );
+	  };
+
+	  info.addTo(map);
+
+      populateDropdown();
+      document.getElementById("columnsDropdown").addEventListener("change", updateColumn);
+    }
+    
+    let selectedColumn = null;
+    
+    function populateDropdown() {
+      const dropdown = document.getElementById("columnsDropdown");
+      const columns = Object.keys(csvData[0]);
+      let parties = [];
+      const excluded = ['id', 'eligible_voters', 'total'];
+
+      dropdown.innerHTML = ''; 
+    
+      columns.forEach((column) => {
+        
+        if (! excluded.includes(column)) { 
+          const option = document.createElement("option");
+          option.value = column;
+          option.textContent = column;
+          dropdown.appendChild(option);
+          parties.push(column)
+        }
+      });
+   
+      if ((selectedColumn == null) || !( columns.includes(selectedColumn))) { 
+        selectedColumn = parties[0]; 
+      } else if (columns.includes(selectedColumn)) {
+        dropdown.value = selectedColumn;
+      };
+
+      matchData(selectedColumn);
+      geojsonLayer.setStyle(feature => {
+        return {
+          fillColor: getColor(feature.properties[selectedColumn]),
+          
+        };
+      });
+
+      info.update(undefined, selectedColumn);
+    }
+    
+    function updateColumn(event) {
+      selectedColumn = event.target.value;
+      matchData(selectedColumn);
+      geojsonLayer.setStyle(feature => {
+        return {
+          fillColor: getColor(feature.properties[selectedColumn]),
+          
+        };
+      });
+      info.update(undefined, selectedColumn);
+    }
+
+    function generateTableHtmlForRowById(targetId) {
+        
+        const targetRow  = csvData.find((row) => ('00000' + row.id).slice(-5) === targetId); 
+
+        if (!targetRow) return '';
+    
+        let html = '<table>';
+    
+        html += '<thead><tr>';
+        html += '<th>Партия</th>';
+        html += '<th>Гласове</th>';
+        html += '<th>Пропорция</th>';
+        html += '</tr></thead>';
+    
+        html += '<tbody><tr>';
+        for (let key in targetRow) {
+            if (key !== "total" && key !== "id" && key !== 'eligible_voters' && key !== 'activity') {  
+                const originalValue = targetRow[key];
+                const multipliedValue = originalValue * targetRow.total;
+
+                html += `<tr>`;
+                html += `<td>${key}</td>`;
+                html += `<td>${Math.round(multipliedValue)}</td>`;
+                html += `<td>${isNaN(originalValue) ? originalValue : originalValue.toFixed(2)}</td>`;
+                html += `</tr>`;
+            }
+        }
+        html += '</tr></tbody>';
+    
+        html += '</table>';
+        return html;
+    }
+</script>

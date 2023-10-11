@@ -123,6 +123,8 @@
 		layer.on({
 			mouseover: highlightFeature,
 			mouseout: resetHighlight,
+			touchstart: highlightFeature,
+			touchend: resetHighlight,
 			click: zoomToFeature
 		});
 	}

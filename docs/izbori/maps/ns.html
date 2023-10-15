@@ -5,21 +5,79 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-	<style>#map { width: 1200; height: 900px; }
-.info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; background: rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; } .info h4 { margin: 0 0 5px; color: #777; }
-.legend { text-align: left; line-height: 18px; color: #555; } .legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }</style>
+	<style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #map { 
+            width: 100%;
+            height: 100%; 
+        }
+        
+        .map-container {
+            position: relative; 
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        .dropdown-container {
+            position: absolute; 
+            top: 10px;
+            left: 50px;  
+            background-color: rgba(255, 255, 255, 0.8); 
+            padding: 5px;
+            border-radius: 5px;
+            z-index: 1000; 
+        }
+        
+        .info { 
+            padding: 6px 8px; 
+            font: 14px/16px Arial, Helvetica, sans-serif; 
+            background: white; 
+            background: rgba(255,255,255,0.8); 
+            box-shadow: 0 0 15px rgba(0,0,0,0.2); 
+            border-radius: 5px; 
+        }
+        
+        .info h4 { 
+            margin: 0 0 5px; 
+            color: #777; 
+        }
+        
+        .legend { 
+            text-align: left; 
+            line-height: 18px; 
+            color: #555; 
+        }
+        
+        .legend i { 
+            width: 18px; 
+            height: 18px; 
+            float: left; 
+            margin-right: 8px; 
+            opacity: 0.7; 
+        }
+    </style>
 </head>
 
 <body>
-    <div id="map" ></div>
-    <select id="csvDropdown">
-        <option value="../../assets/data/data_apr21_pct.csv">Април 2021</option>
-        <option value="../../assets/data/data_jul21_pct.csv">Юли 2021</option>
-        <option value="../../assets/data/data_nov21_pct.csv">Ноември 2021</option>
-        <option value="../../assets/data/data_oct22_pct.csv">Октомври 2022</option>
-        <option value="../../assets/data/data_apr23_pct.csv" selected>Април 2023</option>
-    </select> <br>
-    <select id="columnsDropdown"></select>
+<div class="map-container">
+    <div id="map"></div>
+    <div class="dropdown-container">
+        <select id="csvDropdown">
+            <option value="../../assets/data/data_apr21_pct.csv">Април 2021</option>
+            <option value="../../assets/data/data_jul21_pct.csv">Юли 2021</option>
+            <option value="../../assets/data/data_nov21_pct.csv">Ноември 2021</option>
+            <option value="../../assets/data/data_oct22_pct.csv">Октомври 2022</option>
+            <option value="../../assets/data/data_apr23_pct.csv" selected>Април 2023</option>
+        </select>
+        <br>
+        <select id="columnsDropdown"></select>
+    </div>
+</div> 
 </body>
 </html>
 

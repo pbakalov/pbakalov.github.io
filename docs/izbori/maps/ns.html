@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Choropleth Map</title>
+    <title>Изборна карта</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
@@ -9,7 +9,7 @@
 .info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; background: rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; } .info h4 { margin: 0 0 5px; color: #777; }
 .legend { text-align: left; line-height: 18px; color: #555; } .legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }</style>
 </head>
-</head>
+
 <body>
     <div id="map" ></div>
     <select id="csvDropdown">
@@ -61,12 +61,19 @@
         });
     }
 
-    function matchData(columnName) {
+    function matchData(columnName) { // TODO: get rid of this (no need to add data to the GeoJSON features; you can fetch data dynamically from the csv as needed)
       geojsonData.features.forEach((feature) => {
         const match = csvData.find((row) => ('00000' + row.id).slice(-5) === feature.properties.ncode); 
         if (match) {
           feature.properties[columnName] = match[columnName];
           feature.properties['total'] = match['total']; 
+          feature.properties['eligible_voters'] = match['eligible_voters']; 
+          feature.properties['activity'] = match['activity']; 
+        } else {
+          feature.properties[columnName] = NaN;
+          feature.properties['total'] = NaN; 
+          feature.properties['eligible_voters'] = NaN; 
+          feature.properties['activity'] = NaN; 
         }
       });
     }
@@ -158,17 +165,33 @@
         var selectedYear = document.getElementById('csvDropdown');
         var selectedYearText = selectedYear.options[selectedYear.selectedIndex].textContent;;
         var table = ''; 
+	  	var textbox = '<h4>Резултати ' + selectedColumn + ' (' + selectedYearText + ')</h4>';
+
         if (props) {
             table = generateTableHtmlForRowById(props.ncode);
-        }
 
-	  	this._div.innerHTML = '<h4>Резултати ' + selectedColumn + ' (' + selectedYearText + ')</h4>'+  
-            (
-                props ? '<b>' + props.name + ' (' + props.ncode + ')</b><br/>' +  
-                selectedColumn + ' гласове: ' +  Math.round(props[selectedColumn]*props['total']) + 
-                ` пропорция ${isNaN(props[selectedColumn]) ? props[selectedColumn] : props[selectedColumn].toFixed(2)}<br>` + 
-                table + '<br> Общо: ' +  props['total'] : 'Посочете населено место.'
-            );
+            textbox += '<b>' + props.name + ' (' + props.ncode + ')</b><br>';
+
+            if (selectedColumn !== 'activity') {
+                textbox += selectedColumn + ' гласове: ' +  Math.round(props[selectedColumn]*props['total']) + '<br>' 
+                textbox += selectedColumn + ` пропорция: ${isNaN(props[selectedColumn]) ? props[selectedColumn] : props[selectedColumn].toFixed(2)}<br>`
+            } else {
+                // TODO: breakdown valid votes, invalid votes, total 
+                // TODO: breakdown initial voter list, added to voter list, total 
+                textbox += 'Общо валидни гласове: ' +  Math.round(props[selectedColumn]*props['eligible_voters']) + '<br>' 
+                textbox += 'Избиратели по списък: ' +  props['eligible_voters'] + '<br>'
+                textbox += `Валидни гласове/избиратели по списък: ${isNaN(props[selectedColumn]) ? props[selectedColumn] : props[selectedColumn].toFixed(2)}<br>`
+            }
+            textbox += table + '<br>'
+            textbox += 'Общо валидни гласове: ' +  props['total']  + '<br>'
+            textbox += 'Избиратели по списък: ' +  props['eligible_voters'] + '<br>'
+            textbox += `Валидни гласове/избиратели по списък: ${isNaN(props['activity']) ? props['activity'] : props['activity'].toFixed(2)}<br>`
+            //textbox += `Валидни гласове/избиратели по списък: ${isNaN(props['total']) ? 'no data' : (props['total']/props['eligible_voters']).toFixed(2)}<br>`
+        } else {
+            textbox += 'Посочете населено место.'
+        };
+
+	  	this._div.innerHTML = textbox;
 	  };
 
 	  info.addTo(map);

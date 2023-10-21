@@ -255,6 +255,30 @@
 
 	  info.addTo(map);
 
+      var legend = L.control({position: 'bottomright'});
+
+      legend.onAdd = function (map) {
+
+          var div = L.DomUtil.create('div', 'info legend');
+          var grades = [0, 0.05, 0.1, .2, .4, .6, .7, .8]; 
+          var labels = [];
+          var from, to;
+
+          for (var i = 0; i < grades.length; i++) {
+              from = grades[i];
+              to = grades[i + 1];
+
+              labels.push(
+                  '<i style="background:' + getColor(from + 0.0001) + '"></i> ' +
+                  from + (to ? '&ndash;' + to : '+'));
+          }
+
+          div.innerHTML = labels.join('<br>');
+          return div;
+      };
+
+      legend.addTo(map);
+
       populateDropdown();
       document.getElementById("columnsDropdown").addEventListener("change", updateColumn);
     }

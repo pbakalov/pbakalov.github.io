@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Изборна карта</title>
+    <title>Изборни резултати по населени места</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
@@ -126,12 +126,12 @@
           feature.properties[columnName] = match[columnName];
           feature.properties['total'] = match['total']; 
           feature.properties['eligible_voters'] = match['eligible_voters']; 
-          feature.properties['activity'] = match['activity']; 
+          feature.properties['активност'] = match['активност']; 
         } else {
           feature.properties[columnName] = NaN;
           feature.properties['total'] = NaN; 
           feature.properties['eligible_voters'] = NaN; 
-          feature.properties['activity'] = NaN; 
+          feature.properties['активност'] = NaN; 
         }
       });
     }
@@ -230,20 +230,21 @@
 
             textbox += '<b>' + props.name + ' (' + props.ncode + ')</b><br>';
 
-            if (selectedColumn !== 'activity') {
+            if (selectedColumn !== 'активност') {
                 textbox += selectedColumn + ' гласове: ' +  Math.round(props[selectedColumn]*props['total']) + '<br>' 
-                textbox += selectedColumn + ` пропорция: ${isNaN(props[selectedColumn]) ? props[selectedColumn] : props[selectedColumn].toFixed(2)}<br>`
+                //textbox += selectedColumn + ` %: ${isNaN(props[selectedColumn]) ? props[selectedColumn] : (100*props[selectedColumn]).toFixed(1)}<br>`
             } else {
                 // TODO: breakdown valid votes, invalid votes, total 
                 // TODO: breakdown initial voter list, added to voter list, total 
                 textbox += 'Общо валидни гласове: ' +  Math.round(props[selectedColumn]*props['eligible_voters']) + '<br>' 
                 textbox += 'Избиратели по списък: ' +  props['eligible_voters'] + '<br>'
-                textbox += `Валидни гласове/избиратели по списък: ${isNaN(props[selectedColumn]) ? props[selectedColumn] : props[selectedColumn].toFixed(2)}<br>`
+                //textbox += `Валидни гласове/избиратели по списък: ${isNaN(props[selectedColumn]) ? props[selectedColumn] : props[selectedColumn].toFixed(2)}<br>`
             }
+            textbox += selectedColumn + ` (%): ${isNaN(props[selectedColumn]) ? props[selectedColumn] : (100*props[selectedColumn]).toFixed(1)}<br>`
             textbox += table + '<br>'
             textbox += 'Общо валидни гласове: ' +  props['total']  + '<br>'
             textbox += 'Избиратели по списък: ' +  props['eligible_voters'] + '<br>'
-            textbox += `Валидни гласове/избиратели по списък: ${isNaN(props['activity']) ? props['activity'] : props['activity'].toFixed(2)}<br>`
+            textbox += `Валидни гласове/избиратели по списък: ${isNaN(props['активност']) ? props['активност'] : props['активност'].toFixed(2)}<br>`
             //textbox += `Валидни гласове/избиратели по списък: ${isNaN(props['total']) ? 'no data' : (props['total']/props['eligible_voters']).toFixed(2)}<br>`
         } else {
             textbox += 'Посочете населено место.'
@@ -324,7 +325,7 @@
     
         html += '<tbody><tr>';
         for (let key in targetRow) {
-            if (key !== "total" && key !== "id" && key !== 'eligible_voters' && key !== 'activity') {  
+            if (key !== "total" && key !== "id" && key !== 'eligible_voters' && key !== 'активност') {  
                 const originalValue = targetRow[key];
                 const multipliedValue = originalValue * targetRow.total;
 

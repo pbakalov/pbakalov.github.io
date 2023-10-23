@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Местни избори 2019 София</title>
+    <title>Изборни резултати по секции, София</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
@@ -68,7 +68,12 @@
     <div id="map"></div>
     <div class="dropdown-container">
         <select id="csvDropdown">
-            <option value="../../assets/data/mestni/results2019_test.csv">2019 Втори тур</option>
+            <option value="oct19">Окт 2019 Местни (2ри тур)</option>
+            <option value="apr21" selected>Апр 2021 НС</option>
+            <option value="jul21">Юли 2021 НС</option>
+            <option value="nov21">Ное 2021 НС</option>
+            <option value="oct22">Окт 2022 НС</option>
+            <option value="apr23">Апр 2023 НС</option>
         </select>
         <br>
         <select id="columnsDropdown"></select>
@@ -83,16 +88,17 @@
     let map;
     let geojsonLayer;
 	var info = L.control();
-    let selectedColumn = null;
+    //let selectedColumn = null;
+    let selectedColumn = 'ГЕРБ-СДС';
     
     document.getElementById("csvDropdown").addEventListener("change", function(event) {
-        loadCSV(event).then(populateDropdown);
+        updateGeojson(event).then(populateDropdown); 
     });
 
-    loadGeoJSON().then(initializeMap);
+    loadGeoJSON('apr21').then(initializeMap); 
 
-    function loadCSV(event) {
-        const csvFilename = event.target.value;
+    function loadCSV(el_date) {
+        const csvFilename = "../../assets/data/mestni/sofia_" + el_date + "_pct.csv";
     
         return new Promise((resolve, reject) => {
             Papa.parse(csvFilename, {
@@ -109,45 +115,54 @@
             });
         });
     }
+
+    function updateGeojson(event) {
+        const el_date = event.target.value;
     
-    function loadGeoJSON() {
-      return fetch("../../assets/data/mestni/pollingLocations2019.json")
+        return loadGeoJSON(el_date)
+            .then(() => {
+                map.removeLayer(geojsonLayer);
+    
+                geojsonLayer = L.geoJson(geojsonData, {
+                    style: style,
+                    onEachFeature: onEachFeature
+                }).addTo(map);
+            })
+            .catch(error => {
+                console.error("Failed to load new GeoJSON data:", error);
+            });
+    }
+
+    function loadGeoJSON(el_date) {
+      const jsonFile = "../../assets/data/mestni/sofia_" + el_date + ".json";
+      console.log(jsonFile);
+
+      return fetch(jsonFile)
         .then((response) => response.json())
         .then((data) => {
           geojsonData = data;
-          return loadCSV({ target: { value: "../../assets/data/mestni/results2019_test.csv" } }); 
+          return loadCSV(el_date); 
         });
     }
 
     function matchData(columnName) { // TODO: get rid of this (no need to add data to the GeoJSON features; you can fetch data dynamically from the csv as needed)
       geojsonData.features.forEach((feature) => {
-        //const match = csvData.find((row) => ('00000' + row.id).slice(-5) === feature.properties.ncode); 
-        const match = csvData.find((row) => ('0' + row.sid).slice(-7) === feature.properties.sid); 
+        const match = csvData.find((row) => ('0' + row.id).slice(-9) === feature.properties.sid); 
         if (match) {
           //console.log(match, columnName)
           feature.properties[columnName] = match[columnName];
           feature.properties['total'] = match['total']; 
           feature.properties['eligible_voters'] = match['eligible_voters']; 
-          feature.properties['activity'] = match['activity']; 
+          feature.properties['активност'] = match['активност']; 
         } else {
           console.log('no match ', columnName)
           feature.properties[columnName] = NaN;
           feature.properties['total'] = NaN; 
           feature.properties['eligible_voters'] = NaN; 
-          feature.properties['activity'] = NaN; 
+          feature.properties['активност'] = NaN; 
         }
       });
     }
-
-	function getColor(d) {
-		return d > .8 ? '#800026' :
-			d > .7  ? '#BD0026' :
-			d > .6  ? '#E31A1C' :
-			d > .4  ? '#FC4E2A' :
-			d > .2   ? '#FD8D3C' :
-			d > .1   ? '#FEB24C' :
-			d > .05   ? '#FED976' : '#FFEDA0';
-	}
 
 	function style(feature) {
 		return {
@@ -200,7 +215,7 @@
 	}
 
     function initializeMap() {
-	  map = L.map('map').setView([42.691, 23.333], 11);
+	  map = L.map('map').setView([42.691, 23.333], 12);
     
 	  var tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	  	maxZoom: 19,
@@ -229,7 +244,7 @@
 
             textbox += '<b>Секция ' + props.sid + '</b><br>';
 
-            if (selectedColumn !== 'activity') {
+            if (selectedColumn !== 'активност') {
                 textbox += selectedColumn + ' гласове: ' +  Math.round(props[selectedColumn]*props['total']) + '<br>' 
                 textbox += selectedColumn + ` пропорция: ${isNaN(props[selectedColumn]) ? props[selectedColumn] : props[selectedColumn].toFixed(2)}<br>`
             } else {
@@ -242,8 +257,7 @@
             textbox += table + '<br>'
             textbox += 'Общо валидни гласове: ' +  props['total']  + '<br>'
             textbox += 'Избиратели по списък: ' +  props['eligible_voters'] + '<br>'
-            textbox += `Валидни гласове/избиратели по списък: ${isNaN(props['activity']) ? props['activity'] : props['activity'].toFixed(2)}<br>`
-            //textbox += `Валидни гласове/избиратели по списък: ${isNaN(props['total']) ? 'no data' : (props['total']/props['eligible_voters']).toFixed(2)}<br>`
+            textbox += `Валидни гласове/избиратели по списък: ${isNaN(props['активност']) ? props['активност'] : props['активност'].toFixed(2)}<br>`
         } else {
             textbox += 'Посочете секция.'
         };
@@ -252,6 +266,30 @@
 	  };
 
 	  info.addTo(map);
+
+      var legend = L.control({position: 'bottomleft'});
+
+      legend.onAdd = function (map) {
+
+          var div = L.DomUtil.create('div', 'info legend');
+          var grades = [0, 0.05, 0.1, .2, .4, .6, .7, .8];
+          var labels = [];
+          var from, to;
+
+          for (var i = 0; i < grades.length; i++) {
+              from = grades[i];
+              to = grades[i + 1];
+
+              labels.push(
+                  '<i style="background:' + getColor(from + 0.0001) + '"></i> ' +
+                  from + (to ? '&ndash;' + to : '+'));
+          }
+
+          div.innerHTML = labels.join('<br>');
+          return div;
+      };
+
+      legend.addTo(map);
 
       populateDropdown();
       document.getElementById("columnsDropdown").addEventListener("change", updateColumn);
@@ -262,7 +300,7 @@
       const dropdown = document.getElementById("columnsDropdown");
       const columns = Object.keys(csvData[0]);
       let parties = [];
-      const excluded = ['sid', 'eligible_voters', 'total'];
+      const excluded = ['id', 'eligible_voters', 'total'];
 
       dropdown.innerHTML = ''; 
     
@@ -308,7 +346,7 @@
 
     function generateTableHtmlForRowById(targetId) {
         
-        const targetRow  = csvData.find((row) => ('0000000' + row.sid).slice(-7) === targetId); 
+        const targetRow  = csvData.find((row) => ('0000000' + row.id).slice(-9) === targetId); 
 
         if (!targetRow) return '';
     
@@ -322,7 +360,7 @@
     
         html += '<tbody><tr>';
         for (let key in targetRow) {
-            if (key !== "total" && key !== "sid" && key !== 'eligible_voters' && key !== 'activity') {  
+            if (key !== "total" && key !== "id" && key !== 'eligible_voters' && key !== 'активност') {  
                 const originalValue = targetRow[key];
                 const multipliedValue = originalValue * targetRow.total;
 
@@ -338,4 +376,15 @@
         html += '</table>';
         return html;
     }
+
+	function getColor(d) {
+		return d > .8 ? '#800026' :
+			d > .7  ? '#BD0026' :
+			d > .6  ? '#E31A1C' :
+			d > .4  ? '#FC4E2A' :
+			d > .2   ? '#FD8D3C' :
+			d > .1   ? '#FEB24C' :
+			d > .05   ? '#FED976' : '#FFEDA0';
+	}
+
 </script>

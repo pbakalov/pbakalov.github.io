@@ -246,14 +246,13 @@
 
             if (selectedColumn !== 'активност') {
                 textbox += selectedColumn + ' гласове: ' +  Math.round(props[selectedColumn]*props['total']) + '<br>' 
-                textbox += selectedColumn + ` пропорция: ${isNaN(props[selectedColumn]) ? props[selectedColumn] : props[selectedColumn].toFixed(2)}<br>`
             } else {
                 // TODO: breakdown valid votes, invalid votes, total 
                 // TODO: breakdown initial voter list, added to voter list, total 
                 textbox += 'Общо валидни гласове: ' +  Math.round(props[selectedColumn]*props['eligible_voters']) + '<br>' 
                 textbox += 'Избиратели по списък: ' +  props['eligible_voters'] + '<br>'
-                textbox += `Валидни гласове/избиратели по списък: ${isNaN(props[selectedColumn]) ? props[selectedColumn] : props[selectedColumn].toFixed(2)}<br>`
             }
+            textbox += selectedColumn + ` (%): ${isNaN(props[selectedColumn]) ? props[selectedColumn] : (100*props[selectedColumn]).toFixed(1)}<br>`
             textbox += table + '<br>'
             textbox += 'Общо валидни гласове: ' +  props['total']  + '<br>'
             textbox += 'Избиратели по списък: ' +  props['eligible_voters'] + '<br>'
@@ -272,7 +271,7 @@
       legend.onAdd = function (map) {
 
           var div = L.DomUtil.create('div', 'info legend');
-          var grades = [0, 0.05, 0.1, .2, .4, .6, .7, .8];
+          var grades = [0, .1, .2, .3, .4, .5, .6, .7, .8];
           var labels = [];
           var from, to;
 
@@ -377,14 +376,34 @@
         return html;
     }
 
-	function getColor(d) {
-		return d > .8 ? '#800026' :
-			d > .7  ? '#BD0026' :
-			d > .6  ? '#E31A1C' :
-			d > .4  ? '#FC4E2A' :
-			d > .2   ? '#FD8D3C' :
-			d > .1   ? '#FEB24C' :
-			d > .05   ? '#FED976' : '#FFEDA0';
-	}
+    function interpolateColor(color1, color2, factor) {
+        const r = Math.round(color1[0] + factor * (color2[0] - color1[0]));
+        const g = Math.round(color1[1] + factor * (color2[1] - color1[1]));
+        const b = Math.round(color1[2] + factor * (color2[2] - color1[2]));
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+    
+    function getColor(d) {
+        const colors = [ // check out https://colorbrewer2.org/?type=sequential&scheme=YlOrRd&n=9
+            [255,255,204],
+            [255,237,160],
+            [254,217,118],
+            [254,178,76],
+            [253,141,60],
+            [252,78,42],
+            [227,26,28],
+            [189,0,38],
+            [128,0,38]
+        ];
+    
+    	if (isNaN(d)) return 'rgb(255,255,204)';
+        if (d <= 0) return 'rgb(255,255,204)';
+        if (d >= 0.8) return 'rgb(128,0,38)';
+    
+        const index = Math.floor(d * 10); 
+        const factor = (d * 10) - index;  
+    
+        return interpolateColor(colors[index], colors[index + 1], factor);
+    }
 
 </script>

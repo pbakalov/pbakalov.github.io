@@ -60,6 +60,34 @@
             margin-right: 8px; 
             opacity: 0.7; 
         }
+
+        .show-info-button {
+            position: absolute;
+            top: 80px;
+            left: 10px;
+            width: 35px;
+            height: 35px;
+            z-index: 900; 
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            line-height: 30px;
+            font: 14px/16px Arial, Helvetica, sans-serif; 
+        }
+
+        #infoBox {
+            position: absolute;
+            top: 50px; 
+            left: 20px; 
+            z-index: 1000;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            display: none; 
+        }
+
     </style>
 </head>
 
@@ -82,6 +110,14 @@
         <br>
         <select id="columnsDropdown"></select>
     </div>
+
+    <button id="showInfo" class="show-info-button">i</button>
+    <div id="infoBox" class="info-box" style="display:none;">
+        Изборните данни са от <a href=https://results.cik.bg>ЦИК</a>.<br>
+        Границите на секциите са предоставени от <a href=https://data-for-good.bg/>"Данни за добро"</a>.<br>
+        За коментари и намерени грешки: <a href=https://twitter.com/petar_baka>@petar_baka</a>.<br>
+        <button onclick="showInfoBox()">Затвори</button>
+    </div>
 </div> 
 </body>
 </html>
@@ -92,12 +128,13 @@
     let map;
     let geojsonLayer;
 	var info = L.control();
-    //let selectedColumn = null;
     let selectedColumn = 'ГЕРБ-СДС';
     
     document.getElementById("csvDropdown").addEventListener("change", function(event) {
         updateGeojson(event).then(populateDropdown); 
     });
+
+    document.getElementById('showInfo').addEventListener('click', showInfoBox);
 
     loadGeoJSON('apr21').then(initializeMap); 
 
@@ -409,5 +446,15 @@
     
         return interpolateColor(colors[index], colors[index + 1], factor);
     }
+
+    function showInfoBox() {
+        var infoBox = document.getElementById('infoBox');
+        if (infoBox.style.display === 'none') {
+            infoBox.style.display = 'block';
+        } else {
+            infoBox.style.display = 'none';
+        }
+    }
+
 
 </script>

@@ -48,8 +48,7 @@
         var firstRow = data[0];
         for (var key in firstRow) {
             if (firstRow.hasOwnProperty(key)) {
-                //columns.push({title: key, data: key});
-                if (key === 'Link to Review') { 
+                if (key === 'Link to Review') { //make clickable
                     columns.push({
                         title: key,
                         data: key,
@@ -65,7 +64,8 @@
     
         $('#myTable').DataTable({
             data: data,
-            columns: columns, //no 
+            columns: columns, 
+            pageLength: -1, // all entries in a single page 
             destroy: true 
         });
     }

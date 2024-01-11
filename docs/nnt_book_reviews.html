@@ -65,6 +65,7 @@
         $('#myTable').DataTable({
             data: data,
             columns: columns, 
+            order: [[3, 'desc']],
             pageLength: -1, // all entries in a single page 
             destroy: true 
         });

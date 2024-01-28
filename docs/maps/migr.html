@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Македонски миграции</title>
+    <style>
+    html,body{
+        margin: 0;
+        padding: 0;
+    }
+    #map{
+        position: absolute;
+        height: 100%;
+        width: 100%;
+    }
+    #event{
+        position: absolute;
+        top: 50px;
+        right: 600px;
+        height: 100px;
+        width: 400px;
+        z-index: 10000;
+    }
+    .btn{
+        border-color:gray;
+        border-width: 2px;
+        background-color:white;
+   }
+    </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src='../assets/js/migrationLayer.js'></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+</head>
+
+<body>
+    <div id="map"></div>
+    <script>
+        var lrmap = L.map('map').setView([40, 25], 7);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a>|<a href="https://twitter.com/petar_baka">petar_baka</a>'
+        }).addTo(lrmap);
+
+        let data;
+        let migrationLayer;
+
+        Papa.parse('../assets/data/migration_data.csv', {
+            download: true,
+            header: true,
+            dynamicTyping: true,
+            skipEmptyLines: true, 
+            transform: function(value, header) {
+                if (header === 'from' || header === 'to') {
+                    return JSON.parse(value);
+                }
+                return value;
+            },
+            complete: function(results) {
+                data = results.data;
+                migrationLayer = new L.migrationLayer({
+                    map: lrmap,
+                    data: data,
+                    pulseRadius:30,
+                    pulseBorderWidth:3,
+                    arcWidth:1,
+                    arcLabel:true,
+                    arcLabelFont:'30px sans-serif',
+                    maxWidth:20
+                    }
+                );
+                migrationLayer.addTo(lrmap);
+            }
+        });
+
+    </script>
+</body>
+
+</html>

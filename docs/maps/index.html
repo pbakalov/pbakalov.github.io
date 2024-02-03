@@ -54,6 +54,14 @@
         for (var key in firstRow) {
             if (firstRow.hasOwnProperty(key)) {
                 if (['placeOfDeath', 'placeOfBirth', 'placeOfDeathLocation', 'placeOfBirthLocation', 'person'].includes(key)) { //skip
+                } else if (key === 'personLabel') { //make clickable
+                    columns.push({
+                        title: key,
+                        data: key,
+                        render: function(data, type, row) {
+                            return type === 'display' && data ? '<a href="' + row['person'] + '" target="_blank">' + data + '</a>' : data;
+                        }
+                    });
                 } else {
                     columns.push({title: key, data: key});
                 }

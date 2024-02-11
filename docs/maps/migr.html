@@ -24,6 +24,11 @@
       z-index: 1000; 
       font: 14px/16px Arial, Helvetica, sans-serif;
     }
+    .scrollable-popup-content {
+        max-height: 200px; /* Adjust based on your needs */
+        overflow-y: auto; /* Enables vertical scrollbar if content exceeds max-height */
+    }
+
     </style>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
@@ -58,6 +63,10 @@
     <script>
         var lrmap = L.map('map').setView([41, 25], 7);
 
+        lrmap.on('click', function(e) {
+            //updateFilters(undefined, true);
+        });
+
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: 'Map data <a href="https://wikidata.org">wikidata</a>|©<a href="https://openstreetmap.org">OpenStreetMap</a>|<a href="https://twitter.com/petar_baka">petar_baka</a>'
@@ -67,6 +76,25 @@
         let filteredData;
         let migrationLayer;
         let tCount;
+        let csvData;
+
+        var greenIcon = new L.Icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [12, 20],
+            iconAnchor: [6, 20], // [0.5*iconSize[0], iconSize[1]]
+            popupAnchor: [1, -34],
+            shadowSize: [20, 20],
+        });
+
+        var smallIcon = new L.Icon({
+            iconUrl: L.Icon.Default.prototype._getIconUrl('icon'),
+            shadowUrl: L.Icon.Default.prototype._getIconUrl('shadow'),
+            iconSize: [12, 20],
+            iconAnchor: [6, 20], // use [0.5*iconSize[0], iconSize[1]]
+            popupAnchor: [1, -34],
+            shadowSize: [20, 20],
+        });
 
         Papa.parse('../assets/data/migration_data.csv', {
             download: true,
@@ -96,21 +124,49 @@
                 populateDropdown('toDropdown');
                 populateDropdown('fromDropdown');
                 tCount = sumCol(data3, 'value');
-                updateFilters();
+                updateFilters(undefined);
+                loadCSV();
             }
         });
 
+        function loadCSV() {
+            const csvFilename = '../../assets/data/all_born_in_mk_with_date_and_location_of_birth_and_death.csv';
         
-        document.getElementById("toDropdown").addEventListener("change", updateFilters);
-        document.getElementById("fromDropdown").addEventListener("change", updateFilters);
+            return new Promise((resolve, reject) => {
+                Papa.parse(csvFilename, {
+                    download: true,
+                    header: true,
+                    dynamicTyping: true,
+                    skipEmptyLines: true,
+                    transform: function(value, header) {
+                        if (header === 'placeOfBirthLocation' || header === 'placeOfDeathLocation') {
+                            return JSON.parse('['+value.slice(6,-1).split(' ').join(',')+']');
+                        }
+                        return value;
+                    },
+                    complete: (result) => {
+                        csvData = result.data;
+                        addMarkers(data3);
+                        resolve(result);  
+                    },
+                    error: (error) => {
+                        reject(error); 
+                    }
+                });
+            });
+        }
+        
+        document.getElementById("toDropdown").addEventListener("change", () => updateFilters(undefined));
+        document.getElementById("fromDropdown").addEventListener("change", () => updateFilters(undefined));
 
         var least = document.getElementById("atLeast");
         var most = document.getElementById("atMost");
         var minWeight = document.getElementById("minPairWeight");
 
-        least.onchange = updateFilters;
-        most.onchange = updateFilters;
-        minWeight.onchange = updateFilters;
+        least.onchange = () => updateFilters(undefined);
+        most.onchange = () => updateFilters(undefined);
+        minWeight.onchange = () => updateFilters(undefined);
+
 
         var leastDisplay = document.getElementById("leastDisplay");
         var mostDisplay = document.getElementById("mostDisplay");
@@ -118,31 +174,64 @@
         var countDisplay = document.getElementById("countDisplay");
         
 
-        function updateFilters() {
-            mostDisplay.innerHTML = most.value;
-            leastDisplay.innerHTML = least.value;
-            minWeightDisplay.innerHTML = minWeight.value;
+        function updateFilters(markerCoords, resetFilters=false) {
+            if (markerCoords) {
+                filteredData = data3.filter(row => (
+                    (row.from[0] == markerCoords[0] && row.from[1] === markerCoords[1]) || 
+                    (row.to[0] == markerCoords[0] && row.to[1] === markerCoords[1])
+                ));
 
-            filteredData = data3.filter(row => row.toTotal >= least.value);
-            filteredData = filteredData.filter(row => row.toTotal <= most.value);
-            filteredData = filteredData.filter(row => row.value >= minWeight.value);
-
-            const from = document.getElementById('fromDropdown').value;
-            if (!(from==='')){
-                filteredData = filteredData.filter(row => row.fromLabel === from);
-            }
-
-            const to = document.getElementById('toDropdown').value;
-            if (!(to==='')){
-                filteredData = filteredData.filter(row => row.toLabel === to);
-            }
-
-            if (filteredData.length>0) {
+                most.value = 559;
+                least.value = 1;
+                minWeight.value = 1;
+                mostDisplay.innerHTML = most.value;
+                leastDisplay.innerHTML = least.value;
+                minWeightDisplay.innerHTML = minWeight.value;
                 migrationLayer.setData(filteredData);
+
+                migrationLayer.show()
+                countDisplay.innerHTML = `Показани: ${sumCol(filteredData, 'value')} от ${tCount} души.`
+            } else if (resetFilters) { // sets to defaults 
+                most.value = 559;
+                least.value = 50;
+                minWeight.value = 3;
+                mostDisplay.innerHTML = most.value;
+                leastDisplay.innerHTML = least.value;
+                minWeightDisplay.innerHTML = minWeight.value;
+
+                filteredData = data3.filter(row => row.toTotal >= least.value);
+                filteredData = filteredData.filter(row => row.toTotal <= most.value);
+                filteredData = filteredData.filter(row => row.value >= minWeight.value);
+                migrationLayer.setData(filteredData);
+
                 migrationLayer.show()
                 countDisplay.innerHTML = `Показани: ${sumCol(filteredData, 'value')} от ${tCount} души.`
             } else {
-                migrationLayer.hide(); 
+                mostDisplay.innerHTML = most.value;
+                leastDisplay.innerHTML = least.value;
+                minWeightDisplay.innerHTML = minWeight.value;
+
+                filteredData = data3.filter(row => row.toTotal >= least.value);
+                filteredData = filteredData.filter(row => row.toTotal <= most.value);
+                filteredData = filteredData.filter(row => row.value >= minWeight.value);
+
+                const from = document.getElementById('fromDropdown').value;
+                if (!(from==='')){
+                    filteredData = filteredData.filter(row => row.fromLabel === from);
+                }
+
+                const to = document.getElementById('toDropdown').value;
+                if (!(to==='')){
+                    filteredData = filteredData.filter(row => row.toLabel === to);
+                }
+
+                if (filteredData.length>0) {
+                    migrationLayer.setData(filteredData);
+                    migrationLayer.show()
+                    countDisplay.innerHTML = `Показани: ${sumCol(filteredData, 'value')} от ${tCount} души.`
+                } else {
+                    migrationLayer.hide(); 
+                }
             }
         }
 
@@ -186,6 +275,89 @@
 
         function sumCol(data, col) {
             return data.reduce((sum, row) => sum + row[col], 0);
+        }
+
+        function addMarkers(data) {
+            
+            //var markers = L.markerClusterGroup();
+
+            const coords = Array.from(
+                new Set(
+                    getColumnValues(data, 'from').map(tuple => JSON.stringify(tuple)).concat(
+                        getColumnValues(data, 'to').map(tuple => JSON.stringify(tuple))
+                    )
+                    //getColumnValues(data, 'from').map(tuple => JSON.stringify(tuple))
+                )
+            ).map(string => JSON.parse(string));
+
+            coords.forEach(function(el) {
+                var popupContent = popupText(el);
+
+                var inMk = isInMk(el);
+
+                if (inMk) {
+                    var marker = L.marker(
+                        [el[1], el[0]], {
+                            //opacity:0.3,
+                            icon: smallIcon,
+                        }
+                    ).addTo(lrmap);
+                } else {
+                    var marker = L.marker(
+                        [el[1], el[0]], {
+                            //opacity:0.3,
+                            icon: greenIcon,
+                        }
+                    ).addTo(lrmap);
+                }
+
+                marker.on('click', function(e) {
+                    updateFilters(el);
+                });
+                marker.bindPopup(popupContent);
+                //markers.addLayer(marker);
+            });
+    
+            //map.addLayer(markers);
+        }
+
+        function isInMk(coords) {
+            var bData = csvData.filter( row => (row.placeOfBirthLocation[0] === coords[0] && row.placeOfBirthLocation[1] === coords[1]));
+            if (bData.length > 0) return true;
+            return false
+        }
+
+        function popupText(coords) {
+            var bData = csvData.filter( row => (row.placeOfBirthLocation[0] === coords[0] && row.placeOfBirthLocation[1] === coords[1]));
+            var dData = csvData.filter( row => (row.placeOfDeathLocation[0] === coords[0] && row.placeOfDeathLocation[1] === coords[1]));
+            var bndData = csvData.filter( row => (
+                (row.placeOfDeathLocation[0] === coords[0] && row.placeOfDeathLocation[1] === coords[1]) ||
+                (row.placeOfBirthLocation[0] === coords[0] && row.placeOfBirthLocation[1] === coords[1])
+            ));
+            var nBorn = bData.length;
+            var nDied = dData.length;
+            
+            var label;
+            if (nBorn > 0) {
+                label = bData[0]['placeOfBirthLabel'];
+            } else {
+                label = dData[0]['placeOfDeathLabel'];
+            };
+
+            var popupContent =`<div class="scrollable-popup-content">
+                <strong>${label}</strong><br>
+                <strong>Родени:</strong> ${nBorn}<br>
+                <strong>Починали:</strong> ${nDied}<br>`;
+
+            bndData.forEach((person) =>{
+                var dob = person.dateOfBirth !== null ? person.dateOfBirth.slice(0,4) : 'неизв';
+                var dod = person.dateOfDeath !== null ? person.dateOfDeath.slice(0,4) : 'неизв';
+                popupContent = popupContent + `<a href='${person.person}'>${person.personLabel}</a> 
+                (${person.placeOfBirthLabel} ${dob} - ${person.placeOfDeathLabel} ${dod})<br>`
+            });
+
+            popupContent = popupContent + '</div>';
+            return popupContent
         }
 
     </script>

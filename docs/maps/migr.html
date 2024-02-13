@@ -40,14 +40,10 @@
 <body>
     <div id="map"></div>
     <div class="controls-container">
+        <span>Ползвай филтрите в кутията или избери карфица на картата.</span></br>
         <label for="atLeast">Скрий населени места с под:</label>
         <input type="range" id="atLeast" min="1" max="559" value="10" step="1">
         <span id="leastDisplay">50</span>
-        <span>починали</span></br>
-
-        <label for="atMost">Скрий населени места с над:</label>
-        <input type="range" id="atMost" min="0" max="559" value="559" step="1">
-        <span id="mostDisplay">559</span>
         <span>починали</span></br>
 
         <label for="minPairWeight">Скрий н.м. свързани с по-малко от:</label>
@@ -160,19 +156,15 @@
         document.getElementById("fromDropdown").addEventListener("change", () => updateFilters(undefined));
 
         var least = document.getElementById("atLeast");
-        var most = document.getElementById("atMost");
         var minWeight = document.getElementById("minPairWeight");
 
         least.onchange = () => updateFilters(undefined);
-        most.onchange = () => updateFilters(undefined);
         minWeight.onchange = () => updateFilters(undefined);
 
-
         var leastDisplay = document.getElementById("leastDisplay");
-        var mostDisplay = document.getElementById("mostDisplay");
         var minWeightDisplay = document.getElementById("minWeightDisplay");
+
         var countDisplay = document.getElementById("countDisplay");
-        
 
         function updateFilters(markerCoords, resetFilters=false) {
             if (markerCoords) {
@@ -181,10 +173,8 @@
                     (row.to[0] == markerCoords[0] && row.to[1] === markerCoords[1])
                 ));
 
-                most.value = 559;
                 least.value = 1;
                 minWeight.value = 1;
-                mostDisplay.innerHTML = most.value;
                 leastDisplay.innerHTML = least.value;
                 minWeightDisplay.innerHTML = minWeight.value;
                 migrationLayer.setData(filteredData);
@@ -192,27 +182,22 @@
                 migrationLayer.show()
                 countDisplay.innerHTML = `Показани: ${sumCol(filteredData, 'value')} от ${tCount} души.`
             } else if (resetFilters) { // sets to defaults 
-                most.value = 559;
                 least.value = 50;
                 minWeight.value = 3;
-                mostDisplay.innerHTML = most.value;
                 leastDisplay.innerHTML = least.value;
                 minWeightDisplay.innerHTML = minWeight.value;
 
                 filteredData = data3.filter(row => row.toTotal >= least.value);
-                filteredData = filteredData.filter(row => row.toTotal <= most.value);
                 filteredData = filteredData.filter(row => row.value >= minWeight.value);
                 migrationLayer.setData(filteredData);
 
                 migrationLayer.show()
                 countDisplay.innerHTML = `Показани: ${sumCol(filteredData, 'value')} от ${tCount} души.`
             } else {
-                mostDisplay.innerHTML = most.value;
                 leastDisplay.innerHTML = least.value;
                 minWeightDisplay.innerHTML = minWeight.value;
 
                 filteredData = data3.filter(row => row.toTotal >= least.value);
-                filteredData = filteredData.filter(row => row.toTotal <= most.value);
                 filteredData = filteredData.filter(row => row.value >= minWeight.value);
 
                 const from = document.getElementById('fromDropdown').value;
@@ -235,8 +220,7 @@
             }
         }
 
-        function populateDropdown(dropdownID) {
-
+        function populateDropdown(dropdownID) { 
             const labels = {
               'toDropdown' : 'toLabel', 
               'fromDropdown' : 'fromLabel',

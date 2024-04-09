@@ -31,3 +31,8 @@
 ## [Населени места с много висока подкрепа за ГЕРБ/ДПС](./feodalni.md)
 -->
 
+## Допълнително четене
+
+* Карайотова, Мария и Марио Русинов. [Контролираният и купен вот в България. Размер и влияние. (2021)](https://acf.bg/wp-content/uploads/2021/05/Analiz_BG.pdf)
+* Русинов, Марио и Никола Тулечки. [Изследване на Антикорупционния фонд (2022)](https://acf.bg/wp-content/uploads/2022/11/izbori_octomvri2022_web-2.pdf)
+* Стойчев, Стойчо. [Контролираният и купен вот като инструмент за завладяване на държвата от организирани престъпни мрежи (2017)](https://www.researchgate.net/publication/350410952_Kontroliraniat_i_kupen_vot_kato_instrument_za_zavladavane_na_drzavata_ot_organizirani_prestpni_mrezi_politiceski_riskove_i_tendencii)

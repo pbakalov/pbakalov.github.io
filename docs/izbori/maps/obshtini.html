@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Изборни резултати по населени места</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+	<style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #map { 
+            width: 100%;
+            height: 100%; 
+        }
+        
+        .map-container {
+            position: relative; 
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        .dropdown-container {
+            position: absolute; 
+            top: 10px;
+            left: 50px;  
+            background-color: rgba(255, 255, 255, 0.8); 
+            padding: 5px;
+            border-radius: 5px;
+            z-index: 1000; 
+        }
+        
+        .info { 
+            padding: 6px 8px; 
+            font: 14px/16px Arial, Helvetica, sans-serif; 
+            background: white; 
+            background: rgba(255,255,255,0.8); 
+            box-shadow: 0 0 15px rgba(0,0,0,0.2); 
+            border-radius: 5px; 
+        }
+        
+        .info h4 { 
+            margin: 0 0 5px; 
+            color: #777; 
+        }
+        
+        .legend { 
+            text-align: left; 
+            line-height: 18px; 
+            color: #555; 
+        }
+        
+        .legend i { 
+            width: 18px; 
+            height: 18px; 
+            float: left; 
+            margin-right: 8px; 
+            opacity: 0.7; 
+        }
+
+        .info-box {
+            position: absolute;
+            top: 50px; 
+            left: 20px; 
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            z-index: 1000; 
+            font: 14px/16px Arial, Helvetica, sans-serif; 
+        }
+    </style>
+</head>
+
+<body>
+<div class="map-container">
+    <div id="map"></div>
+    <div class="dropdown-container">
+        <select id="csvDropdown">
+            <option value="../../assets/data/2013-05-12ns_mun.csv">Май 2013</option>
+            <option value="../../assets/data/2014-10-05ns_mun.csv">Април 2014</option>
+            <option value="../../assets/data/2017-03-26ns_mun.csv">Март 2017</option>
+            <option value="../../assets/data/2021-04-04ns_mun.csv">Април 2021</option>
+            <option value="../../assets/data/2021-07-11ns_mun.csv">Юли 2021</option>
+            <option value="../../assets/data/2021-11-14ns_mun.csv">Ноември 2021</option>
+            <option value="../../assets/data/2022-10-02ns_mun.csv">Октомври 2022</option>
+            <option value="../../assets/data/2023-04-02ns_mun.csv">Април 2023</option>
+            <option value="../../assets/data/2024-06-09ns_mun.csv" selected>Юни 2024 НС</option>
+        </select>
+        <br>
+        <select id="columnsDropdown"></select>
+    </div>
+</div>
+<div id="infoBox" class="info-box" style="display:none;">
+    Изборните данни са от <a href=https://results.cik.bg>ЦИК</a>.<br>
+    Данни по секции и инструменти за анализ:<a href=https://bg-izbori.herokuapp.com/>bg-izbori.herokuapp.com</a>.<br>
+    Границите на общините са от <a href=https://265obshtini.bg/map/13>ИПИ</a>.<br>
+    За коментари и намерени грешки: <a href=https://twitter.com/petar_baka>@petar_baka</a>.<br>
+    <button onclick="closeInfoBox()">Затвори</button>
+</div>
+</body>
+</html>
+
+<script type='text/javascript'>
+    let csvData;
+    let geojsonData;
+    let map;
+    let geojsonLayer;
+	var info = L.control();
+    let selectedColumn = null;
+    
+    document.getElementById("csvDropdown").addEventListener("change", function(event) {
+        loadCSV(event).then(populateDropdown);
+    });
+
+    loadGeoJSON().then(initializeMap);
+
+    function loadCSV(event) {
+        const csvFilename = event.target.value;
+    
+        return new Promise((resolve, reject) => {
+            Papa.parse(csvFilename, {
+                download: true,
+                header: true,
+                dynamicTyping: true,
+                complete: (result) => {
+                    csvData = result.data;
+                    resolve(result);  
+                },
+                error: (error) => {
+                    reject(error); 
+                }
+            });
+        });
+    }
+    
+    function loadGeoJSON() {
+      return fetch("../../assets/data/municipalities.json")
+        .then((response) => response.json())
+        .then((data) => {
+          geojsonData = data;
+          return loadCSV({ target: { value: "../../assets/data/2024-06-09ns_mun.csv" } }); 
+        });
+    }
+
+    function matchData(columnName) { // TODO: get rid of this (no need to add data to the GeoJSON features; you can fetch data dynamically from the csv as needed)
+      geojsonData.features.forEach((feature) => {
+        const match = csvData.find((row) => row.nuts4 === feature.properties.nuts4); 
+        if (match) {
+          feature.properties[columnName] = match[columnName];
+          if (columnName !=='total') {
+            feature.properties[`${columnName}_prop`] = match[columnName]/match['total'];
+          } else {
+            feature.properties[`${columnName}_prop`] = match[columnName]/match['eligible_voters'];
+          };
+          feature.properties['total'] = match['total']; 
+          feature.properties['eligible_voters'] = match['eligible_voters']; 
+          feature.properties['активност'] = match['total']/match['eligible_voters']; 
+        } else {
+          feature.properties[columnName] = NaN;
+          feature.properties['total'] = NaN; 
+          feature.properties['eligible_voters'] = NaN; 
+          feature.properties['активност'] = NaN; 
+        }
+      });
+    }
+
+    function getColor(d) {
+		return d > .8 ? '#800026' :
+			d > .7  ? '#BD0026' :
+			d > .6  ? '#E31A1C' :
+			d > .4  ? '#FC4E2A' :
+			d > .2   ? '#FD8D3C' :
+			d > .1   ? '#FEB24C' :
+			d > .05   ? '#FED976' : '#FFEDA0';
+	}
+
+    function style(feature) {
+		return {
+			weight: 2,
+			opacity: 1,
+			color: 'white',
+			dashArray: '3',
+			fillOpacity: 0.7,
+            fillColor: getColor(feature.properties[`${selectedColumn}_prop`]),
+		};
+	}
+
+    function highlightFeature(e) {
+		var layer = e.target;
+
+		layer.setStyle({
+			weight: 5,
+			color: '#666',
+			dashArray: '',
+			fillOpacity: 0.7
+		});
+
+		if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+			layer.bringToFront();
+		}
+
+		info.update(layer.feature.properties, selectedColumn);
+	}
+
+    function zoomToFeature(e) {
+		map.fitBounds(e.target.getBounds());
+	}
+
+
+    function resetHighlight(e) {
+		geojsonLayer.resetStyle(e.target);
+		info.update(undefined, selectedColumn);
+	}
+
+    function onEachFeature(feature, layer) {
+		layer.on({
+			mouseover: highlightFeature,
+			mouseout: resetHighlight,
+			click: zoomToFeature,
+			dbclick: function(e) {
+                highlightFeature(e);
+                zoomToFeature(e);
+            }
+		});
+	}
+
+    function initializeMap() {
+	  map = L.map('map').setView([42.934, 25.938], 8);
+    
+	  var tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	  	maxZoom: 19,
+	  	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>|<a href="https://twitter.com/petar_baka">petar_baka</a>'
+	  }).addTo(map);
+
+      geojsonLayer = L.geoJson(geojsonData, {
+       	style: style,
+      	onEachFeature: onEachFeature
+      }).addTo(map);
+
+      info.onAdd = function (map) {
+	  	this._div = L.DomUtil.create('div', 'info');
+	  	this.update();
+	  	return this._div;
+	  };
+
+      info.update = function (props, selectedColumn) {
+	  	var textbox = generateTextbox(props, selectedColumn)
+
+	  	this._div.innerHTML = textbox;
+	  };
+
+	  info.addTo(map);
+
+      var legend = L.control({position: 'bottomleft'});
+
+      legend.onAdd = function (map) {
+
+          var div = L.DomUtil.create('div', 'info legend');
+          var grades = [0, 0.05, 0.1, .2, .4, .6, .7, .8]; 
+          var labels = [];
+          var from, to;
+
+          for (var i = 0; i < grades.length; i++) {
+              from = grades[i];
+              to = grades[i + 1];
+
+              labels.push(
+                  '<i style="background:' + getColor(from + 0.0001) + '"></i> ' +
+                  from + (to ? '&ndash;' + to : '+'));
+          }
+
+          div.innerHTML = labels.join('<br>');
+          return div;
+      };
+
+      legend.addTo(map);
+
+      populateDropdown();
+      document.getElementById("columnsDropdown").addEventListener("change", updateColumn);
+
+      L.Control.InfoButton = L.Control.extend({
+          onAdd: function(map) {
+              var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+      
+              container.style.backgroundColor = 'white';     
+              container.style.width = '30px';
+              container.style.height = '30px';
+              container.innerHTML = 'i'; 
+              container.style.fontSize = '18px';
+              container.style.textAlign = 'center';
+              container.style.lineHeight = '30px';
+              container.style.cursor = 'pointer';
+      
+              container.onclick = function(){
+                  openInfoBox();
+              }
+      
+              return container;
+          }
+      });
+      
+      var infoButton = new L.Control.InfoButton({ position: 'topleft' });
+      infoButton.addTo(map);
+  
+    }
+
+    function populateDropdown() {
+      const dropdown = document.getElementById("columnsDropdown");
+      const columns = Object.keys(csvData[0]);
+      let parties = [];
+      const excluded = [
+        'id', 'eligible_voters', 
+        //'total', 
+        'activity',
+        'nuts4', 'municipality_name', 'region', 'region_name', 'n_stations'
+      ];
+
+      dropdown.innerHTML = ''; 
+    
+      columns.forEach((column) => {
+        
+        if (! excluded.includes(column)) { 
+          const option = document.createElement("option");
+          option.value = column;
+          if (column ==='total') {
+            option.textContent = 'активност';
+          } else {
+            option.textContent = column;
+          }
+          dropdown.appendChild(option);
+          parties.push(column)
+        }
+      });
+   
+      if ((selectedColumn == null) || !( columns.includes(selectedColumn))) { 
+        selectedColumn = parties[0]; 
+      } else if (columns.includes(selectedColumn)) {
+        dropdown.value = selectedColumn;
+      };
+
+      matchData(selectedColumn);
+      geojsonLayer.setStyle(feature => {
+        return {
+          fillColor: getColor(feature.properties[`${selectedColumn}_prop`]),
+          
+        };
+      });
+
+      info.update(undefined, selectedColumn);
+    }
+    
+    function updateColumn(event) {
+      selectedColumn = event.target.value;
+      matchData(selectedColumn);
+      geojsonLayer.setStyle(feature => {
+        return {
+          fillColor: getColor(feature.properties[`${selectedColumn}_prop`]),
+          
+        };
+      });
+      info.update(undefined, selectedColumn);
+    }
+
+    function generateTextbox(props, selectedColumn) {
+
+        var selectedYear = document.getElementById('csvDropdown');
+        var selectedYearText = selectedYear.options[selectedYear.selectedIndex].textContent;;
+        if (selectedColumn!=='total') {
+            var textbox = '<h4>Резултати ' + selectedColumn + ' (' + selectedYearText + ')</h4>';
+        } else {
+            var textbox = '<h4>Активност (' + selectedYearText + ')</h4>';
+        }
+
+        if (props) {
+            const targetRow  = csvData.find((row) => row.nuts4 === props.nuts4); 
+            var table = generateTableHtmlForRowById(props.nuts4);
+
+            textbox += `<b>Община ${props.name}</b><br>`;
+            //TODO number of stations; number of settlements;
+
+            if (selectedColumn !== 'total') {
+                textbox += selectedColumn + ' гласове: ' +  props[selectedColumn] + '<br>' 
+                textbox += `${selectedColumn} (%): ${isNaN(props[selectedColumn]) ? 'н.д.' : (100*props[selectedColumn]/props['total']).toFixed(1)}<br>`
+            } else {
+                // TODO: breakdown valid votes, invalid votes, total 
+                // TODO: breakdown initial voter list, added to voter list, total 
+                textbox += 'Общо гласували: ' +  props['total'] + '<br>' 
+                textbox += 'Невалидни: ' +  targetRow['невалидни'] + '<br>' 
+                textbox += 'Не подкрепям никого: ' +  targetRow['не подкрепям никого'] + '<br>' 
+                textbox += 'Избиратели по списък: ' +  props['eligible_voters'] + '<br>'
+                textbox += `Активност (%): ${isNaN(props['total']) ? 'н.д.' : (100*props['total']/props['eligible_voters']).toFixed(1)}<br>`
+            }
+            textbox += table + '<br>'
+            textbox += 'Общо гласували (вкл. невалидни): ' +  props['total']  + '<br>'
+            textbox += 'Избиратели по списък: ' +  props['eligible_voters'] + '<br>'
+            textbox += `Гласували/избиратели по списък: ${isNaN(props['total']) ? 'н.д.' : (props['total']/props['eligible_voters']).toFixed(2)}<br>`
+            textbox += `Брой секции: ${targetRow['n_stations']}<br>`
+        } else {
+            textbox += 'Посочете община.'
+        };
+        
+        return textbox;
+    }
+
+    function generateTableHtmlForRowById(targetId) {
+        
+        const targetRow  = csvData.find((row) => row.nuts4 === targetId); 
+
+        if (!targetRow) return '';
+    
+        let html = '<table>';
+    
+        html += '<thead><tr>';
+        html += '<th>Партия</th>';
+        html += '<th>Гласове</th>';
+        html += '<th>Пропорция</th>';
+        html += '</tr></thead>';
+    
+        html += '<tbody><tr>';
+        for (let key in targetRow) {
+            if (![
+                    "total",
+                    "id",
+                    "eligible_voters",
+                    "activity",
+                    'region',
+                    'region_name',
+                    'nuts4',
+                    'municipality_name',
+                    'n_stations'
+                ].includes(key)) {
+                const nVotes = targetRow[key];
+                const proportion = nVotes / targetRow.total;
+
+                html += `<tr>`;
+                html += `<td>${key}</td>`;
+                html += `<td>${nVotes}</td>`;
+                html += `<td>${isNaN(proportion) ? 'н.д.' : proportion.toFixed(2)}</td>`;
+                html += `</tr>`;
+            }
+        }
+        html += '</tr></tbody>';
+    
+        html += '</table>';
+        return html;
+    }
+    
+    function openInfoBox() {
+        document.getElementById('infoBox').style.display = 'block';
+    }
+    
+    function closeInfoBox() {
+        document.getElementById('infoBox').style.display = 'none';
+    }
+
+
+</script>

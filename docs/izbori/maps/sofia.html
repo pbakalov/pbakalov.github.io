@@ -341,9 +341,11 @@
         var selectedYearText = selectedYear.options[selectedYear.selectedIndex].textContent;;
         var table = ''; 
 	  	var textbox = '<h4>Резултати ' + selectedColumn + ' (' + selectedYearText + ')</h4>';
+        let targetRows = csvData.filter(row => !!row.id);
 
         if (props) {
-            table = generateTableHtmlForRowById(props.sid);
+            targetRows = targetRows.filter((row) => (row.id + '').startsWith(props.sid))
+            table = generateTableHtmlForRows(targetRows);
 
             textbox += '<b>Секция ' + props.sid + '</b>';
             textbox += '&nbsp;&nbsp;Район: <b>' + getCityRegionName(props.sid.substring(2, 6)) + '</b><br>';
@@ -362,7 +364,29 @@
             textbox += 'Избиратели по списък: ' +  props['eligible_voters'] + '<br>'
             textbox += `Валидни гласове/избиратели по списък: ${isNaN(props['активност']) ? props['активност'] : props['активност'].toFixed(2)}<br>`
         } else {
-            textbox += 'Посочете секция.'
+            targetRows = selectedCityRegion
+              ? targetRows.filter((row) => (row.id + '').substring(2, 6) === selectedCityRegion.substring(2))
+              : selectedElectionRegion
+                ? targetRows.filter((row) => Object.keys(cityRegions).find(x => (row.id + '').substring(2, 6) === x.substring(2)).substring(0, 2) === selectedElectionRegion)
+              : targetRows;
+
+            textbox += 'Общ резултат за <b>'
+              + (selectedCityRegion
+                ? 'Район ' + cityRegions[selectedCityRegion]
+                : selectedElectionRegion
+                  ? electionRegions[selectedElectionRegion]
+                  : 'Столична община'
+                )
+              + '</b><br>';
+            if (selectedColumn !== 'активност') {
+                textbox += selectedColumn + ' гласове: ' + targetRows.reduce((acc, x) => acc + Math.round(x[selectedColumn] * x.total), 0) + '<br>' 
+            } else {
+                // TODO: breakdown valid votes, invalid votes, total 
+                // TODO: breakdown initial voter list, added to voter list, total 
+                textbox += 'Общо валидни гласове: ' + targetRows.reduce((acc, x) => acc + Math.round(x[selectedColumn] * x.eligible_voters), 0) + '<br>' 
+                textbox += 'Избиратели по списък: ' +  targetRows.reduce((acc, x) => acc + x.eligible_voters, 0) + '<br>'
+            }
+            textbox += generateTableHtmlForRows(targetRows)
         };
 
 	  	this._div.innerHTML = textbox;
@@ -496,11 +520,8 @@
       info.update(undefined, selectedColumn);
     }
 
-    function generateTableHtmlForRowById(targetId) {
-        
-        const targetRow  = csvData.find((row) => ('0000000' + row.id).slice(-9) === targetId); 
-
-        if (!targetRow) return '';
+    function generateTableHtmlForRows(targetRows) {
+        if (targetRows.length === 0) return '';
     
         let html = '<table>';
     
@@ -511,15 +532,16 @@
         html += '</tr></thead>';
     
         html += '<tbody><tr>';
-        for (let key in targetRow) {
-            if (key !== "total" && key !== "id" && key !== 'eligible_voters' && key !== 'активност') {  
-                const originalValue = targetRow[key];
-                const multipliedValue = originalValue * targetRow.total;
+        const allTotal = targetRows.reduce((acc, x) => acc + parseInt(x.total, 10), 0)
+        for (let key in targetRows[0]) {
+            if (key !== "total" && key !== "id" && key !== 'eligible_voters' && key !== 'активност') {
+                const votes = targetRows.reduce((acc, x) => acc + Math.round(x[key] * parseInt(x.total, 10)), 0)
+                const percentage = votes / allTotal * 100
 
                 html += `<tr>`;
                 html += `<td>${key}</td>`;
-                html += `<td>${Math.round(multipliedValue)}</td>`;
-                html += `<td>${isNaN(originalValue) ? originalValue : originalValue.toFixed(2)}</td>`;
+                html += `<td>${votes}</td>`;
+                html += `<td>${isNaN(percentage) ? percentage : percentage.toFixed(2) + '%'}</td>`;
                 html += `</tr>`;
             }
         }

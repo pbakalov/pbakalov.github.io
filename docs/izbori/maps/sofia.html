@@ -33,6 +33,15 @@
             z-index: 1000; 
         }
         
+        .dropdown-container select {
+            width: 200px;
+        }
+
+        .dropdown-container select + select {
+            margin-top: 5px;
+            display: block;
+        }
+
         .info { 
             padding: 6px 8px; 
             font: 14px/16px Arial, Helvetica, sans-serif; 
@@ -107,8 +116,16 @@
             <option value="oct23r1OS">Окт 2023 (1ви тур, ОС)</option>
             <option value="oct23r2">Окт 2023 (2ри тур, кмет)</option>
         </select>
-        <br>
         <select id="columnsDropdown"></select>
+        <select id="electionRegionsDropdown">
+            <option value="">МИР</option>
+            <option value="2346">23 МИР</option>
+            <option value="2446">24 МИР</option>
+            <option value="2546">25 МИР</option>
+        </select>
+        <select id="cityRegionsDropdown">
+            <option value="">Район</option>
+        </select>
     </div>
 
     <button id="showInfo" class="show-info-button">i</button>
@@ -128,15 +145,52 @@
     let map;
     let geojsonLayer;
 	var info = L.control();
+    let electionDate = 'apr21'
     let selectedColumn = 'ГЕРБ-СДС';
+    let selectedElectionRegion = ''
+    let selectedCityRegion = ''
     
     document.getElementById("csvDropdown").addEventListener("change", function(event) {
-        updateGeojson(event).then(populateDropdown); 
+        electionDate = event.target.value
+        updateGeojson(electionDate).then(populateDropdowns);
     });
 
     document.getElementById('showInfo').addEventListener('click', showInfoBox);
 
-    loadGeoJSON('apr21').then(initializeMap); 
+    loadGeoJSON(electionDate).then(initializeMap);
+
+    const electionRegions = {
+        "2346": "23 МИР",
+        "2446": "24 МИР",
+        "2546": "25 МИР",
+    }
+
+    const cityRegions = {
+        "234617": "Витоша",
+        "234602": "Красно село",
+        "234615": "Младост",
+        "234623": "Панчарево",
+        "234610": "Триадица",
+        "234616": "Студентски",
+        "234608": "Изгрев",
+        "234609": "Лозенец",
+        "244622": "Кремиковци",
+        "244601": "Средец",
+        "244607": "Слатина",
+        "244614": "Искър",
+        "244604": "Оборище",
+        "244606": "Подуяне",
+        "244603": "Възраждане",
+        "244605": "Сердика",
+        "254620": "Връбница",
+        "254619": "Люлин",
+        "254613": "Надежда",
+        "254611": "Красна поляна",
+        "254612": "Илинден",
+        "254618": "Овча Купел",
+        "254621": "Нови Искър",
+        "254624": "Банкя",
+    };
 
     function loadCSV(el_date) {
         const csvFilename = "../../assets/data/mestni/sofia_" + el_date + "_pct.csv";
@@ -157,12 +211,20 @@
         });
     }
 
-    function updateGeojson(event) {
-        const el_date = event.target.value;
-    
+    function updateGeojson(el_date) {
         return loadGeoJSON(el_date)
             .then(() => {
                 map.removeLayer(geojsonLayer);
+                const filteredFeatures = geojsonData.features.filter(
+                    ({ properties }) => {
+                        const sectionId = properties.id || properties.ID
+                        // Filter for election region based on district so it works for local elections too
+                        return (!selectedElectionRegion || Object.keys(cityRegions).find(x => sectionId.substring(2, 6) === x.substring(2)).substring(0, 2) === selectedElectionRegion.substring(0, 2) )
+                        // Filter based on city region without the election region so it works for local elections too
+                            && (!selectedCityRegion || sectionId.substring(2, 6) === selectedCityRegion.substring(2))
+                    }
+                )
+                geojsonData.features = filteredFeatures
     
                 geojsonLayer = L.geoJson(geojsonData, {
                     style: style,
@@ -283,7 +345,8 @@
         if (props) {
             table = generateTableHtmlForRowById(props.sid);
 
-            textbox += '<b>Секция ' + props.sid + '</b><br>';
+            textbox += '<b>Секция ' + props.sid + '</b>';
+            textbox += '&nbsp;&nbsp;Район: <b>' + getCityRegionName(props.sid.substring(2, 6)) + '</b><br>';
 
             if (selectedColumn !== 'активност') {
                 textbox += selectedColumn + ' гласове: ' +  Math.round(props[selectedColumn]*props['total']) + '<br>' 
@@ -331,12 +394,10 @@
 
       legend.addTo(map);
 
-      populateDropdown();
-      document.getElementById("columnsDropdown").addEventListener("change", updateColumn);
+      populateDropdowns();
     }
     
-    
-    function populateDropdown() {
+    function populateDropdowns() {
       const dropdown = document.getElementById("columnsDropdown");
       const columns = Object.keys(csvData[0]);
       let parties = [];
@@ -361,15 +422,66 @@
         dropdown.value = selectedColumn;
       };
 
-      matchData(selectedColumn);
-      geojsonLayer.setStyle(feature => {
-        return {
-          fillColor: getColor(feature.properties[selectedColumn]),
-          
-        };
-      });
+      updateColumn({ target: { value: selectedColumn } })
+      dropdown.removeEventListener("change", updateColumn);
+      dropdown.addEventListener("change", updateColumn);
 
-      info.update(undefined, selectedColumn);
+      populateElectionRegionsDropdown();
+      populateCityRegionsDropdown(selectedElectionRegion);
+    }
+
+    function updateFillData() {
+        updateColumn({ target: { value: selectedColumn } })
+    }
+
+    function changeSelectedElectionRegion(event) {
+        selectedElectionRegion = event.target.value;
+        populateCityRegionsDropdown(selectedElectionRegion)
+        updateGeojson(electionDate).then(updateFillData)
+    }
+
+    function getCityRegionName(municipalityRegionCode) {
+        return Object.entries(cityRegions).find(([prefix, name]) => prefix.substring(2, 6) === municipalityRegionCode)[1]
+    }
+
+    function populateElectionRegionsDropdown() {
+        const dropdown = document.getElementById('electionRegionsDropdown')
+        dropdown.removeEventListener('change', changeSelectedElectionRegion)
+        dropdown.addEventListener("change", changeSelectedElectionRegion);
+    }
+
+    function changeSelectedCityRegion(event) {
+        selectedCityRegion = event.target.value;
+        updateGeojson(electionDate).then(updateFillData)
+    }
+
+    function populateCityRegionsDropdown(prefixFilter = '') {
+        const dropdown = document.getElementById('cityRegionsDropdown')
+        dropdown.removeEventListener('change', changeSelectedCityRegion)
+
+        // remove dropdown options after first
+        while (dropdown.options.length > 1) {
+            dropdown.remove(1);
+        }
+
+        Object.entries(cityRegions)
+            // Filter city regions to matching election regions
+            .filter(([prefix, name]) => prefix.startsWith(prefixFilter))
+            // Sort city regions by name
+            .sort(([prefixA, nameA], [prefixB, nameB]) => nameA.localeCompare(nameB))
+            .forEach(([prefix, name]) => {
+                const option = document.createElement('option')
+                option.value = prefix
+                option.textContent = name
+                if (option.value === selectedCityRegion) {
+                  option.selected = true
+                }
+                dropdown.appendChild(option)
+            })
+        if (dropdown.value !== selectedCityRegion) {
+          selectedCityRegion = ''
+        }
+        dropdown.addEventListener('change', changeSelectedCityRegion);
     }
     
     function updateColumn(event) {

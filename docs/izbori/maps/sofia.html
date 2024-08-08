@@ -217,7 +217,7 @@
                 map.removeLayer(geojsonLayer);
                 const filteredFeatures = geojsonData.features.filter(
                     ({ properties }) => {
-                        const sectionId = properties.id || properties.ID
+                        const sectionId = properties.id || properties.ID || properties.index
                         // Filter for election region based on district so it works for local elections too
                         return (!selectedElectionRegion || Object.keys(cityRegions).find(x => sectionId.substring(2, 6) === x.substring(2)).substring(0, 2) === selectedElectionRegion.substring(0, 2) )
                         // Filter based on city region without the election region so it works for local elections too

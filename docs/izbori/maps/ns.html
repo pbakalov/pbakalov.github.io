@@ -80,14 +80,16 @@
     <div id="map"></div>
     <div class="dropdown-container">
         <select id="csvDropdown">
-            <option value="../../assets/data/data_mar17_pct.csv">Март 2017</option>
-            <option value="../../assets/data/data_apr21_pct.csv">Април 2021</option>
-            <option value="../../assets/data/data_jul21_pct.csv">Юли 2021</option>
-            <option value="../../assets/data/data_nov21_pct.csv">Ноември 2021</option>
-            <option value="../../assets/data/data_oct22_pct.csv">Октомври 2022</option>
-            <option value="../../assets/data/data_apr23_pct.csv">Април 2023</option>
-            <option value="../../assets/data/data_jun24_pct.csv" selected>Юни 2024 НС</option>
-            <option value="../../assets/data/data_jun24ep_pct.csv">Юни 2024 ЕП</option>
+            <option value="../../assets/data/2013-05-12ns.csv">Май 2013</option>
+            <option value="../../assets/data/2014-10-05ns.csv">Април 2014</option>
+            <option value="../../assets/data/2017-03-26ns.csv">Март 2017</option>
+            <option value="../../assets/data/2021-04-04ns.csv">Април 2021</option>
+            <option value="../../assets/data/2021-07-11ns.csv">Юли 2021</option>
+            <option value="../../assets/data/2021-11-14ns.csv">Ноември 2021</option>
+            <option value="../../assets/data/2022-10-02ns.csv">Октомври 2022</option>
+            <option value="../../assets/data/2023-04-02ns.csv">Април 2023</option>
+            <option value="../../assets/data/2024-06-09ns.csv" selected>Юни 2024 НС</option>
+            <option value="../../assets/data/2024-06-09ep.csv">Юни 2024 ЕП</option>
         </select>
         <br>
         <select id="columnsDropdown"></select>
@@ -95,6 +97,7 @@
 </div>
 <div id="infoBox" class="info-box" style="display:none;">
     Изборните данни са от <a href=https://results.cik.bg>ЦИК</a>.<br>
+    Данни по секции и инструменти за анализ:<a href=https://bg-izbori.herokuapp.com/>bg-izbori.herokuapp.com</a>.<br>
     Границите на населените места са от <a href=https://www.nsi.bg/nrnm/spatial-data>НСИ</a>.<br>
     За коментари и намерени грешки: <a href=https://twitter.com/petar_baka>@petar_baka</a>.<br>
     <button onclick="closeInfoBox()">Затвори</button>
@@ -140,7 +143,7 @@
         .then((response) => response.json())
         .then((data) => {
           geojsonData = data;
-          return loadCSV({ target: { value: "../../assets/data/data_jun24_pct.csv" } }); 
+          return loadCSV({ target: { value: "../../assets/data/2024-06-09ns.csv" } }); 
         });
     }
 
@@ -149,9 +152,14 @@
         const match = csvData.find((row) => ('00000' + row.id).slice(-5) === feature.properties.ncode); 
         if (match) {
           feature.properties[columnName] = match[columnName];
+          if (columnName !=='total') {
+            feature.properties[`${columnName}_prop`] = match[columnName]/match['total'];
+          } else {
+            feature.properties[`${columnName}_prop`] = match[columnName]/match['eligible_voters'];
+          };
           feature.properties['total'] = match['total']; 
           feature.properties['eligible_voters'] = match['eligible_voters']; 
-          feature.properties['активност'] = match['активност']; 
+          feature.properties['активност'] = match['total']/match['eligible_voters']; 
         } else {
           feature.properties[columnName] = NaN;
           feature.properties['total'] = NaN; 
@@ -178,7 +186,7 @@
 			color: 'white',
 			dashArray: '3',
 			fillOpacity: 0.7,
-            fillColor: getColor(feature.properties[selectedColumn]),
+            fillColor: getColor(feature.properties[`${selectedColumn}_prop`]),
 		};
 	}
 
@@ -241,35 +249,7 @@
 	  };
 
       info.update = function (props, selectedColumn) {
-        var selectedYear = document.getElementById('csvDropdown');
-        var selectedYearText = selectedYear.options[selectedYear.selectedIndex].textContent;;
-        var table = ''; 
-	  	var textbox = '<h4>Резултати ' + selectedColumn + ' (' + selectedYearText + ')</h4>';
-
-        if (props) {
-            table = generateTableHtmlForRowById(props.ncode);
-
-            textbox += '<b>' + props.name + ' (' + props.ncode + ')</b><br>';
-
-            if (selectedColumn !== 'активност') {
-                textbox += selectedColumn + ' гласове: ' +  Math.round(props[selectedColumn]*props['total']) + '<br>' 
-                //textbox += selectedColumn + ` %: ${isNaN(props[selectedColumn]) ? props[selectedColumn] : (100*props[selectedColumn]).toFixed(1)}<br>`
-            } else {
-                // TODO: breakdown valid votes, invalid votes, total 
-                // TODO: breakdown initial voter list, added to voter list, total 
-                textbox += 'Общо валидни гласове: ' +  Math.round(props[selectedColumn]*props['eligible_voters']) + '<br>' 
-                textbox += 'Избиратели по списък: ' +  props['eligible_voters'] + '<br>'
-                //textbox += `Валидни гласове/избиратели по списък: ${isNaN(props[selectedColumn]) ? props[selectedColumn] : props[selectedColumn].toFixed(2)}<br>`
-            }
-            textbox += selectedColumn + ` (%): ${isNaN(props[selectedColumn]) ? props[selectedColumn] : (100*props[selectedColumn]).toFixed(1)}<br>`
-            textbox += table + '<br>'
-            textbox += 'Общо валидни гласове: ' +  props['total']  + '<br>'
-            textbox += 'Избиратели по списък: ' +  props['eligible_voters'] + '<br>'
-            textbox += `Валидни гласове/избиратели по списък: ${isNaN(props['активност']) ? props['активност'] : props['активност'].toFixed(2)}<br>`
-            //textbox += `Валидни гласове/избиратели по списък: ${isNaN(props['total']) ? 'no data' : (props['total']/props['eligible_voters']).toFixed(2)}<br>`
-        } else {
-            textbox += 'Посочете населено место.'
-        };
+	  	var textbox = generateTextbox(props, selectedColumn)
 
 	  	this._div.innerHTML = textbox;
 	  };
@@ -333,7 +313,12 @@
       const dropdown = document.getElementById("columnsDropdown");
       const columns = Object.keys(csvData[0]);
       let parties = [];
-      const excluded = ['id', 'eligible_voters', 'total'];
+      const excluded = [
+        'id', 'eligible_voters', 
+        'total_valid', 
+        'activity',
+        'nuts4', 'municipality_name', 'region', 'region_name', 'n_stations'
+      ];
 
       dropdown.innerHTML = ''; 
     
@@ -342,7 +327,11 @@
         if (! excluded.includes(column)) { 
           const option = document.createElement("option");
           option.value = column;
-          option.textContent = column;
+          if (column ==='total') {
+            option.textContent = 'активност';
+          } else {
+            option.textContent = column;
+          }
           dropdown.appendChild(option);
           parties.push(column)
         }
@@ -357,7 +346,7 @@
       matchData(selectedColumn);
       geojsonLayer.setStyle(feature => {
         return {
-          fillColor: getColor(feature.properties[selectedColumn]),
+          fillColor: getColor(feature.properties[`${selectedColumn}_prop`]),
           
         };
       });
@@ -370,11 +359,51 @@
       matchData(selectedColumn);
       geojsonLayer.setStyle(feature => {
         return {
-          fillColor: getColor(feature.properties[selectedColumn]),
+          fillColor: getColor(feature.properties[`${selectedColumn}_prop`]),
           
         };
       });
       info.update(undefined, selectedColumn);
+    }
+
+    function generateTextbox(props, selectedColumn) {
+
+        var selectedYear = document.getElementById('csvDropdown');
+        var selectedYearText = selectedYear.options[selectedYear.selectedIndex].textContent;;
+        if (selectedColumn!=='total') {
+            var textbox = '<h4>Резултати ' + selectedColumn + ' (' + selectedYearText + ')</h4>';
+        } else {
+            var textbox = '<h4>Активност (' + selectedYearText + ')</h4>';
+        }
+
+        if (props) {
+            const targetRow  = csvData.find((row) => ('00000' + row.id).slice(-5) === props.ncode); 
+
+            var table = generateTableHtmlForRowById(props.ncode);
+
+            textbox += `<b>${props.name} (${props.ncode})</b><br>`;
+
+            if (selectedColumn !== 'total') {
+                textbox += selectedColumn + ' гласове: ' +  props[selectedColumn] + '<br>' 
+                textbox += `${selectedColumn} (%): ${isNaN(props[selectedColumn]) ? 'н.д.' : (100*props[selectedColumn]/props['total']).toFixed(1)}<br>`
+            } else {
+                // TODO: breakdown initial voter list, added to voter list, total 
+                textbox += 'Общо гласували: ' +  props['total'] + '<br>' 
+                textbox += 'Невалидни: ' +  targetRow['невалидни'] + '<br>' 
+                textbox += 'Не подкрепям никого: ' +  targetRow['не подкрепям никого'] + '<br>' 
+                textbox += 'Избиратели по списък: ' +  props['eligible_voters'] + '<br>'
+                textbox += `Активност (%): ${isNaN(props['total']) ? 'н.д.' : (100*props['total']/props['eligible_voters']).toFixed(1)}<br>`
+            }
+            textbox += table + '<br>'
+            textbox += 'Общо гласували (вкл. невалидни): ' +  props['total']  + '<br>'
+            textbox += 'Избиратели по списък: ' +  props['eligible_voters'] + '<br>'
+            textbox += `Гласували/избиратели по списък: ${isNaN(props['total']) ? 'н.д.' : (props['total']/props['eligible_voters']).toFixed(2)}<br>`
+            textbox += `Брой секции: ${targetRow ? targetRow['n_stations'] : 0}<br>`
+        } else {
+            textbox += 'Посочете населено место.'
+        };
+        
+        return textbox;
     }
 
     function generateTableHtmlForRowById(targetId) {
@@ -393,14 +422,25 @@
     
         html += '<tbody><tr>';
         for (let key in targetRow) {
-            if (key !== "total" && key !== "id" && key !== 'eligible_voters' && key !== 'активност') {  
-                const originalValue = targetRow[key];
-                const multipliedValue = originalValue * targetRow.total;
+            if (![
+                    "total",
+                    "total_valid",
+                    "id",
+                    "eligible_voters",
+                    "activity",
+                    'region',
+                    'region_name',
+                    'nuts4',
+                    'municipality_name',
+                    'n_stations'
+                ].includes(key)) {
+                const nVotes = targetRow[key];
+                const proportion = nVotes / targetRow.total;
 
                 html += `<tr>`;
                 html += `<td>${key}</td>`;
-                html += `<td>${Math.round(multipliedValue)}</td>`;
-                html += `<td>${isNaN(originalValue) ? originalValue : originalValue.toFixed(2)}</td>`;
+                html += `<td>${nVotes}</td>`;
+                html += `<td>${isNaN(proportion) ? 'н.д.' : proportion.toFixed(2)}</td>`;
                 html += `</tr>`;
             }
         }

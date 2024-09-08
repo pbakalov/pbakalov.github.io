@@ -306,8 +306,25 @@
       
       var infoButton = new L.Control.InfoButton({ position: 'topleft' });
       infoButton.addTo(map);
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const lat = parseFloat(urlParams.get('lat'));
+      const lng = parseFloat(urlParams.get('lng'));
+      const zoom = parseInt(urlParams.get('zoom'), 10);
+      
+      if (lat && lng && zoom) {
+          map.setView([lat, lng], zoom);
+      }
+      map.on('moveend zoomend', updateUrlWithMapState);
   
     }
+
+    const updateUrlWithMapState = () => {
+        const center = map.getCenter();
+        const zoom = map.getZoom();
+        const newUrl = `${window.location.pathname}?lat=${center.lat}&lng=${center.lng}&zoom=${zoom}`;
+        window.history.replaceState(null, '', newUrl);
+    };
 
     function populateDropdown() {
       const dropdown = document.getElementById("columnsDropdown");

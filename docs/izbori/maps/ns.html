@@ -224,10 +224,30 @@
 	}
 
     function onEachFeature(feature, layer) {
+        const defaultPopup = `<h3>${feature.properties.name}, общ.${feature.properties.obsht_name}, обл.${feature.properties.oblast_name}</h3>`;
+        
+        layer.bindPopup(
+            `${defaultPopup}Заражда се...`, 
+            {maxWidth: 600}
+        );
+
 		layer.on({
 			mouseover: highlightFeature,
 			mouseout: resetHighlight,
-			click: zoomToFeature,
+			click: function(e) {
+                zoomToFeature(e);
+                get_ts_data(selectedColumn, feature.properties.ncode).then(
+                    ts_data => {
+                    const popupContent = JsonToTable(ts_data);
+                    layer.setPopupContent(
+                        `${defaultPopup}${popupContent}`
+                    );
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    layer.setPopupContent('Грешка.');
+                });
+            },
 		});
 	}
 
@@ -281,8 +301,6 @@
       };
 
       legend.addTo(map);
-
-      //populateDropdown();
 
       L.Control.InfoButton = L.Control.extend({
           onAdd: function(map) {
@@ -433,7 +451,7 @@
 
             var table = generateTableHtmlForRowById(props.ncode);
 
-            textbox += `<b>${props.name} (${props.ncode})</b><br>`;
+            textbox += `<b>${props.name}, общ. ${props.obsht_name} (${props.ncode})</b><br>`;
 
             if (selectedColumn !== 'total') {
                 textbox += selectedColumn + ' гласове: ' +  props[selectedColumn] + '<br>' 
@@ -509,4 +527,51 @@
     function closeInfoBox() {
         document.getElementById('infoBox').style.display = 'none';
     }
+
+    async function get_ts_data(party, ekatte) {
+        try {
+            const response = await fetch(`https://bg-izbori.herokuapp.com/api/data?party=${party}&ekatte=${ekatte}`);
+            const ts_data = await response.json();
+            return ts_data; 
+        } catch (error) {
+            console.error('Error:', error);
+            return null;
+        }
+    }
+
+    function JsonToTable(data) {
+        const skip = ['place', 'region_name'];
+        const renameMap = {
+            'invalid' : 'Невалидни',
+            'eligible_voters' : 'По списък',
+            'n_stations' : 'Секции',
+            'invalid' : 'Невалидни',
+            'total' : 'Общо гласували',
+        }
+
+        let thead = '<table><thead><tr><th>Дата</th>';
+        for (let key in data) {
+            if (!renameMap.hasOwnProperty(key)) renameMap[key] = key;
+            if (!skip.includes(key))  {
+                thead += `<th>${renameMap[key]}</th>`;
+            }
+        }
+        thead += '</tr></thead>';
+        
+        let tbody = '<tbody>';
+
+        const dates = Object.keys(data.eligible_voters);
+
+        dates.forEach(date => {
+            tbody += `<tr><td>${date}</td>`;
+            for (let key in data) {
+                if (!skip.includes(key)) tbody += `<td>${data[key][date]}</td>`;
+            }
+            tbody += '</tr>';
+        });
+        tbody += '</tbody></table>';
+
+        return thead + tbody;
+    }
+
 </script>

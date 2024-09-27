@@ -236,9 +236,9 @@
 			mouseout: resetHighlight,
 			click: function(e) {
                 zoomToFeature(e);
-                get_ts_data(selectedColumn, feature.properties.ncode).then(
-                    ts_data => {
-                    const popupContent = JsonToTable(ts_data);
+                getTsData(selectedColumn, feature.properties.ncode).then(
+                    tsData => {
+                    const popupContent = JsonToTable(tsData);
                     const sids = `<br><a href="https://bg-izbori.herokuapp.com/api/sids?ekatte=${feature.properties.ncode}">виж секции</a>`;
                     layer.setPopupContent(
                         `${defaultPopup}${popupContent}${sids}`
@@ -529,11 +529,18 @@
         document.getElementById('infoBox').style.display = 'none';
     }
 
-    async function get_ts_data(party, ekatte) {
+    async function getTsData(party, ekatte) {
+        const renameMap = {
+            'не подкрепям никого' : 'npn'
+        }
+
+        const p_ = renameMap[party] || party;
+
         try {
-            const response = await fetch(`https://bg-izbori.herokuapp.com/api/data?party=${party}&ekatte=${ekatte}`);
-            const ts_data = await response.json();
-            return ts_data; 
+            const response = await fetch(`https://bg-izbori.herokuapp.com/api/data?party=${p_}&ekatte=${ekatte}`);
+            const tsData = await response.json();
+
+            return tsData; 
         } catch (error) {
             console.error('Error:', error);
             return null;
@@ -548,6 +555,7 @@
             'n_stations' : 'Секции',
             'invalid' : 'Невалидни',
             'total' : 'Общо гласували',
+            'npn' : 'Не подкрепям никого',
         }
 
         let thead = '<table><thead><tr><th>Дата</th>';

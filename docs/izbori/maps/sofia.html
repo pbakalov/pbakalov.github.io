@@ -401,7 +401,7 @@
       legend.onAdd = function (map) {
 
           var div = L.DomUtil.create('div', 'info legend');
-          var grades = [0, 20, 60, 100, 140, 180, 220, 260, 300];
+          var grades = [0, 10, 30, 50, 70, 90, 110, 130, 150];
           var labels = [];
           var from, to;
 
@@ -573,10 +573,10 @@
         ];
 
     	if (isNaN(d) || d <= 0) return 'rgb(255,255,204)';
-        if (d >= 300) return 'rgb(128,0,38)';
+        if (d >= 150) return 'rgb(128,0,38)';
     
-        const index = Math.floor(d / 65);
-        const factor = (d / 65) - index;
+        const index = Math.floor(d / 60);
+        const factor = (d / 60) - index;
     
         return interpolateColor(colors[index], colors[index + 1], factor);
     }

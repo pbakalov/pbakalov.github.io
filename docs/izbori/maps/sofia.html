@@ -276,7 +276,7 @@
 			color: 'white',
 			dashArray: '3',
 			fillOpacity: 0.7,
-            fillColor: getColor(feature.properties[selectedColumn]),
+            fillColor: getColor(Math.round(feature.properties[selectedColumn] * feature.properties.eligible_voters)),
 		};
 	}
 
@@ -515,7 +515,7 @@
       matchData(selectedColumn);
       geojsonLayer.setStyle(feature => {
         return {
-          fillColor: getColor(feature.properties[selectedColumn]),
+          fillColor: getColor(Math.round(feature.properties[selectedColumn] * feature.properties.eligible_voters)),
           
         };
       });
@@ -572,13 +572,12 @@
             [189,0,38],
             [128,0,38]
         ];
+
+    	if (isNaN(d) || d <= 0) return 'rgb(255,255,204)';
+        if (d >= 300) return 'rgb(128,0,38)';
     
-    	if (isNaN(d)) return 'rgb(255,255,204)';
-        if (d <= 0) return 'rgb(255,255,204)';
-        if (d >= 0.8) return 'rgb(128,0,38)';
-    
-        const index = Math.floor(d * 10); 
-        const factor = (d * 10) - index;  
+        const index = Math.floor(d / 65);
+        const factor = (d / 65) - index;
     
         return interpolateColor(colors[index], colors[index + 1], factor);
     }

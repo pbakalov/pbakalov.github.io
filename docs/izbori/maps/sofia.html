@@ -369,7 +369,7 @@
             targetRows = selectedCityRegion
               ? targetRows.filter((row) => (row.id + '').substring(2, 6) === selectedCityRegion.substring(2))
               : selectedElectionRegion
-                ? targetRows.filter((row) => Object.keys(cityRegions).find(x => (row.id + '').substring(2, 6) === x.substring(2)).substring(0, 2) === selectedElectionRegion)
+                ? targetRows.filter((row) => Object.keys(cityRegions).find(x => (row.id + '').substring(2, 6) === x.substring(2)).substring(0, 2) === selectedElectionRegion.substring(0, 2))
               : targetRows;
 
             textbox += 'Общ резултат за <b>'

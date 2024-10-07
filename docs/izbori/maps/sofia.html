@@ -276,7 +276,7 @@
 			color: 'white',
 			dashArray: '3',
 			fillOpacity: 0.7,
-            fillColor: getColor(Math.round(feature.properties[selectedColumn] * feature.properties.eligible_voters)),
+            fillColor: getColor(Math.round(feature.properties[selectedColumn] * feature.properties.total)),
 		};
 	}
 
@@ -515,8 +515,7 @@
       matchData(selectedColumn);
       geojsonLayer.setStyle(feature => {
         return {
-          fillColor: getColor(Math.round(feature.properties[selectedColumn] * feature.properties.eligible_voters)),
-          
+          fillColor: getColor(Math.round(feature.properties[selectedColumn] * feature.properties.total)),
         };
       });
       info.update(undefined, selectedColumn);

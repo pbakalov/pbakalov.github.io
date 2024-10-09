@@ -240,7 +240,7 @@
                 getTsData(selectedColumn, feature.properties.ncode).then(
                     tsData => {
                     const popupContent = JsonToTable(tsData);
-                    const sids = `<br><a href="https://bg-izbori.herokuapp.com/api/sids?ekatte=${feature.properties.ncode}">виж секции</a>`;
+                    const sids = `<br><a href="../hist.html?ekatte=${feature.properties.ncode}">виж секции</a>`;
                     layer.setPopupContent(
                         `${defaultPopup}${popupContent}${sids}`
                     );

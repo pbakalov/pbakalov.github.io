@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Секции</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body { 
+            padding: 6px 8px; 
+            font: 14px/16px Arial, Helvetica, sans-serif; 
+            background: white; 
+            background: rgba(255,255,255,0.8); 
+            box-shadow: 0 0 15px rgba(0,0,0,0.2); 
+            border-radius: 5px; 
+        }
+        
+    </style>
+</head>
+
+<body>
+<div id='outputContainer'>Зарежда се...<div>
+</body>
+
+<script>
+    const ApiBaseUrl = 'https://bg-izbori.herokuapp.com/api/';
+
+    async function fetchData(url) {
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            return data; 
+        } catch (error) {
+            console.error('Error:', error);
+            return null;
+        }
+    }
+
+    async function getSidsByDate(ekatte) {
+        const url=`${ApiBaseUrl}/sids?ekatte=${ekatte}`;
+
+        const data = await fetchData(url);
+        return data;
+    }
+
+    async function getSidResults(el, sid) {
+        const url=`${ApiBaseUrl}/single_election_data?el=${el}&sid=${sid}`;
+
+        const data = await fetchData(url);
+        return data;
+    }
+
+    function showSidDetails(el, sid) {
+        getSidResults(el, sid).then(sidData => {
+            const newContent = sidDetail(sidData, el, sid);
+            document.getElementById('outputContainer').innerHTML = newContent;
+        });
+    }
+
+    function sidDetail(sidData, el, sid) {
+        const skipKeys = ['region', 'station', 'admin_reg', 'municipality'];
+
+        // metadata
+        let tableHTML = `<h3>${el} секция ${sid}</h3>`; 
+        tableHTML += '<table><thead><tr><th>Данни за секцията</th><th></th></tr></thead><tbody>';
+        metadataKeys.forEach(key => {
+            if (!renameMap.hasOwnProperty(key)) renameMap[key] = key;
+            const value = sidData[key][sid] || 'н.д.'; 
+            if (!skipKeys.includes(key)) {
+                tableHTML += `<tr><td>${renameMap[key]}</td><td>${value}</td></tr>`;
+            };
+        });
+        tableHTML += '</tbody></table>';
+
+        // votes
+        const partyVotes = [];
+
+        for (const key in sidData) {
+            if (!metadataKeys.includes(key)) {
+                if (!renameMap.hasOwnProperty(key)) renameMap[key] = key;
+                const votes = sidData[key][sid];
+                partyVotes.push({ party: renameMap[key], votes: votes });
+            }
+        }
+
+        partyVotes.sort((a, b) => b.votes - a.votes);
+
+        let voteTableHTML = '<h4>Резултати</h4>'; 
+        voteTableHTML += '<table><thead><tr><th>Партия</th><th>Гласове</th></tr></thead><tbody>';
+        
+        partyVotes.forEach(item => {
+            voteTableHTML += `<tr><td>${item.party}</td><td>${item.votes}</td></tr>`;
+        });
+        
+        voteTableHTML += '</tbody></table>';
+
+        return tableHTML + voteTableHTML;
+    }
+
+    function generateHTML(sidsByDate) {
+        const pageUrl = `${window.location.pathname}`
+        let htmlOutput = '';
+
+        for (const date in sidsByDate) {
+            htmlOutput += `<strong>${date}</strong><br>`;
+            const sids = sidsByDate[date];
+            sids.forEach(sid => {
+                htmlOutput += `<a href="${pageUrl}?el=${date}&sid=${sid}" onclick="showSidDetails('${date}', '${sid}')">${sid}</a><br>`;
+            });
+            htmlOutput += '<br>';
+        }
+    
+        return htmlOutput;
+    }
+
+    const metadataKeys = [
+        "place", "address", "admin_reg", "ekatte", "eligible_voters",
+        "municipality", "municipality_name", "station", "region", "region_name"
+    ];
+
+    const renameMap = {
+        'invalid' : 'Невалидни',
+        'eligible_voters' : 'По списък',
+        'n_stations' : 'Секции',
+        'invalid' : 'Невалидни',
+        'total' : 'Общо гласували',
+        'npn' : 'Не подкрепям никого',
+        'place' : 'Населено място',
+        'address' : 'Адрес',
+        'ekatte' : 'ЕКАТТЕ',
+        'municipality_name' : 'Община',
+        'region_name' : 'Избирателен район',
+    }
+
+    const urlParams = new URLSearchParams(window.location.search); 
+    const ekatte = parseInt(urlParams.get('ekatte'));
+    const el = urlParams.get('el');
+    const sid = urlParams.get('sid');
+
+    if (!isNaN(ekatte)) {
+        // TODO showSidsByDate()
+        getSidsByDate(ekatte).then(sidsByDate => {
+            const resultHTML = generateHTML(sidsByDate);
+            document.getElementById('outputContainer').innerHTML = resultHTML;
+        });
+    } else if (el!==null && sid!==null) {
+        showSidDetails(el, sid);
+    }
+
+</script>

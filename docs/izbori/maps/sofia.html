@@ -223,6 +223,8 @@
         "254621": "Нови Искър",
         "254624": "Банкя",
     };
+    
+    const grades = [10, 30, 50, 70, 90, 110, 130, 150];
 
     function loadCSV(el_date) {
         const csvFilename = "../../assets/data/mestni/sofia_" + el_date + "_pct.csv";
@@ -431,7 +433,6 @@
       legend.onAdd = function (map) {
 
           var div = L.DomUtil.create('div', 'info legend');
-          var grades = [0, 10, 30, 50, 70, 90, 110, 130, 150];
           var labels = [];
           var from, to;
 
@@ -599,24 +600,26 @@
     
     function getColor(d) {
         const colors = [ // check out https://colorbrewer2.org/?type=sequential&scheme=YlOrRd&n=9
-            [255,255,204],
-            [255,240,110],
-            [254,230,95],
-            [225,128,54],
-            [223,115,50],
-            [221,78,42],
-            [215,26,28],
-            [189,0,38],
-            [128,0,38]
+            [255,255,245],
+            [255,247,245],
+            [255,247,236],
+            [253,212,158],
+            [254,232,200],
+            [254,230,192],
+            [239,101,72],
+            [215,48,31],
+            [179,0,0],
         ];
 
         if (isNaN(d) || d <= 0) return 'rgb(' + colors[0].join(',') + ')';
         if (d >= 150) return 'rgb(' + colors[colors.length - 1].join(',') +')';
 
-        const index = Math.floor(d / 30);
-        const factor = (d / 30) - index;
+        const index = grades.findIndex(x => d < x);
+        // const factor = (d / 65) - index;
+        
+        return 'rgb(' + colors[index].join(',') + ')'
     
-        return interpolateColor(colors[index], colors[index + 1], factor);
+        // return interpolateColor(colors[index], colors[index + 1], factor);
     }
 
     function showInfoBox() {

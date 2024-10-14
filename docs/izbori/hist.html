@@ -3,7 +3,7 @@
 <head>
     <title>Секции</title>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src='https://cdn.plot.ly/plotly-2.35.2.min.js'></script>
     <style>
         body, html {
             height: 100%;
@@ -19,12 +19,33 @@
             box-shadow: 0 0 15px rgba(0,0,0,0.2); 
             border-radius: 5px; 
         }
+
+        #outputContainer {
+            max-width: 100vw;
+            max-height: 100vh;
+        }
+
+        #text {
+            max-width: 100%;
+            max-height: 50%;
+        }
+
+
+        #chart {
+            max-width: 100%;
+            max-height: 50%;
+        }
         
     </style>
 </head>
 
 <body>
-<div id='outputContainer'>Зарежда се...<div>
+<div id='outputContainer'>
+    <div id='text'>
+        Зарежда се...
+    </div>
+    <div id='chart'></div>
+<div>
 </body>
 
 <script>
@@ -55,6 +76,13 @@
         return data;
     }
 
+    async function getSidHist(sid, party) {
+        const url=`${ApiBaseUrl}/data?sid=${sid}&party=${party}`;
+
+        const data = await fetchData(url);
+        return data;
+    }
+
     function showSidDetails(el, sid) {
         getSidResults(el, sid).then(sidData => {
             const newContent = sidDetail(sidData, el, sid);
@@ -62,11 +90,79 @@
         });
     }
 
+    function showSidHistory(sid, party) {
+        getSidHist(sid, party).then(sidData => {
+            updatePlot(sidData);
+        });
+    }
+
+    function updatePlot(jsonData)  {
+
+        const dates = Object.keys(jsonData.eligible_voters);
+        const cols = ['address', 'eligible_voters', 'total', `${party}`]
+        const traces = ['eligible_voters', 'total', `${party}`]
+        
+        // sid metadata 
+        const meta = document.getElementById('text')
+        let tableHTML = contact + `<h3>Данни за секция ${sid}</h3>`; 
+        tableHTML += '<table><thead><tr>';
+        tableHTML += '<th>Дата</th>';
+        cols.forEach(col => {
+            tableHTML += `<th>${(renameMap[col]||col)}</th>`;
+        });
+        tableHTML += '</tr></thead><tbody>';
+        
+        dates.forEach(key => {
+            tableHTML += `<tr><td>${key}</td>`;
+            cols.forEach(col => {
+                const value = jsonData[col][key];
+                tableHTML += `<td>${value}</td>`;
+            });
+            tableHTML += `</tr>`;
+        });
+        tableHTML += '</tbody></table>';
+
+        meta.innerHTML = tableHTML;
+
+        const colorMap = {
+            [party] : 'blue',
+            'eligible_voters' : 'gray',
+            'total' : 'black',
+        }
+
+        const data = traces.map(col => ({
+            x: dates,
+            y: Object.values(jsonData[col]),
+            mode: 'lines+markers',
+            type: 'scatter',
+            marker: {
+                size: 10,
+                color: colorMap[col],
+            },
+            name: (renameMap[col]||col),
+        }));
+        
+        const layout = {
+            title: `Резултати секция ${sid}`,
+            xaxis: {
+                title: 'Дата'
+            },
+            yaxis: {
+                title: 'Гласове'
+            },
+            showlegend : true,
+            height: 600,
+            width: 800,
+        };
+
+        Plotly.newPlot('chart', data, layout);
+    }
+
     function sidDetail(sidData, el, sid) {
         const skipKeys = ['region', 'station', 'admin_reg', 'municipality'];
 
         // metadata
-        let tableHTML = `<h3>${el} секция ${sid}</h3>`; 
+        let tableHTML = contact + `<h3>${el} секция ${sid}</h3>`; 
         tableHTML += '<table><thead><tr><th>Данни за секцията</th><th></th></tr></thead><tbody>';
         metadataKeys.forEach(key => {
             if (!renameMap.hasOwnProperty(key)) renameMap[key] = key;
@@ -104,7 +200,7 @@
 
     function generateHTML(sidsByDate) {
         const pageUrl = `${window.location.pathname}`
-        let htmlOutput = '';
+        let htmlOutput = contact;
 
         for (const date in sidsByDate) {
             htmlOutput += `<strong>${date}</strong><br>`;
@@ -117,6 +213,8 @@
     
         return htmlOutput;
     }
+
+    const contact = 'За коментари и намерени грешки: <a href=https://twitter.com/petar_baka>@petar_baka</a>.<br>'
 
     const metadataKeys = [
         "place", "address", "admin_reg", "ekatte", "eligible_voters",
@@ -141,6 +239,7 @@
     const ekatte = parseInt(urlParams.get('ekatte'));
     const el = urlParams.get('el');
     const sid = urlParams.get('sid');
+    const party = urlParams.get('party');
 
     if (!isNaN(ekatte)) {
         // TODO showSidsByDate()
@@ -150,6 +249,8 @@
         });
     } else if (el!==null && sid!==null) {
         showSidDetails(el, sid);
+    } else if (sid!==null && party!==null) {
+        showSidHistory(sid, party);
     }
 
 </script>

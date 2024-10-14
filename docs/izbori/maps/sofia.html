@@ -152,8 +152,38 @@
     let selectedElectionRegion = ''
     let selectedCityRegion = ''
     
+    // Load parameters from localStorage or URL
+    function loadParameters() {
+        const params = new URLSearchParams(window.location.search);
+        electionDate = params.get('election') || localStorage.getItem('electionDate') || 'apr21';
+        selectedColumn = params.get('column') || localStorage.getItem('selectedColumn') || 'ГЕРБ-СДС';
+        selectedElectionRegion = params.get('electionRegion') || localStorage.getItem('selectedElectionRegion') || '';
+        selectedCityRegion = params.get('cityRegion') || localStorage.getItem('selectedCityRegion') || '';
+    }
+
+    // Save parameters to localStorage and update URL
+    function saveParameters() {
+        localStorage.setItem('electionDate', electionDate);
+        localStorage.setItem('selectedColumn', selectedColumn);
+        localStorage.setItem('selectedElectionRegion', selectedElectionRegion);
+        localStorage.setItem('selectedCityRegion', selectedCityRegion);
+
+        const params = new URLSearchParams();
+        params.set('election', electionDate);
+        params.set('column', selectedColumn);
+        if (selectedElectionRegion) params.set('electionRegion', selectedElectionRegion);
+        if (selectedCityRegion) params.set('cityRegion', selectedCityRegion);
+
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        history.pushState(null, '', newUrl);
+    }
+
+    // Load parameters on page load
+    loadParameters();
+
     document.getElementById("csvDropdown").addEventListener("change", function(event) {
-        electionDate = event.target.value
+        electionDate = event.target.value;
+        saveParameters();
         updateGeojson(electionDate).then(populateDropdowns);
     });
 
@@ -421,6 +451,11 @@
       legend.addTo(map);
 
       populateDropdowns();
+        
+        // Set initial dropdown values
+        document.getElementById("csvDropdown").value = electionDate;
+        document.getElementById("electionRegionsDropdown").value = selectedElectionRegion;
+        document.getElementById("cityRegionsDropdown").value = selectedCityRegion;
     }
     
     function populateDropdowns() {
@@ -462,8 +497,9 @@
 
     function changeSelectedElectionRegion(event) {
         selectedElectionRegion = event.target.value;
-        populateCityRegionsDropdown(selectedElectionRegion)
-        updateGeojson(electionDate).then(updateFillData)
+        saveParameters();
+        populateCityRegionsDropdown(selectedElectionRegion);
+        updateGeojson(electionDate).then(updateFillData);
     }
 
     function getCityRegionName(municipalityRegionCode) {
@@ -478,7 +514,8 @@
 
     function changeSelectedCityRegion(event) {
         selectedCityRegion = event.target.value;
-        updateGeojson(electionDate).then(updateFillData)
+        saveParameters();
+        updateGeojson(electionDate).then(updateFillData);
     }
 
     function populateCityRegionsDropdown(prefixFilter = '') {
@@ -512,6 +549,7 @@
     
     function updateColumn(event) {
       selectedColumn = event.target.value;
+      saveParameters();
       matchData(selectedColumn);
       geojsonLayer.setStyle(feature => {
         return {

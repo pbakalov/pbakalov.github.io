@@ -572,11 +572,11 @@
             [128,0,38]
         ];
 
-    	if (isNaN(d) || d <= 0) return 'rgb(255,255,204)';
-        if (d >= 150) return 'rgb(128,0,38)';
-    
-        const index = Math.floor(d / 60);
-        const factor = (d / 60) - index;
+        if (isNaN(d) || d <= 0) return 'rgb(' + colors[0].join(',') + ')';
+        if (d >= 150) return 'rgb(' + colors[colors.length - 1].join(',') +')';
+
+        const index = Math.floor(d / 30);
+        const factor = (d / 30) - index;
     
         return interpolateColor(colors[index], colors[index + 1], factor);
     }

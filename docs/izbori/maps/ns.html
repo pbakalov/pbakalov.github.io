@@ -73,6 +73,10 @@
             z-index: 1000; 
             font: 14px/16px Arial, Helvetica, sans-serif; 
         }
+
+        .leaflet-popup-content {
+            width: auto;
+        }
     </style>
 </head>
 
@@ -93,7 +97,12 @@
             <option value="../../assets/data/2024-06-09ep.csv">Юни 2024 ЕП</option>
         </select>
         <br>
-        <select id="columnsDropdown"></select>
+        <select id="columnsDropdown"></select><br>
+        <label>
+            Карфици:<br>
+            <input type="checkbox" id="toggleMarkers" checked>
+            Топ спадове юли 2021 (<a href="../2021/top.html">инфо</a>)
+        </label>
     </div>
 </div>
 <div id="infoBox" class="info-box" style="display:none;">
@@ -109,6 +118,7 @@
 <script type='text/javascript'>
     let csvData;
     let geojsonData;
+    let markerData;
     let map;
     let geojsonLayer;
 	var info = L.control();
@@ -120,7 +130,10 @@
 
     document.getElementById("columnsDropdown").addEventListener("change", updateColumn);
 
-    loadGeoJSON().then(initializeMap);
+    loadGeoJSON().then(() => loadMarkerData()).then(data =>{
+        markerData = data;
+        initializeMap();
+    });
 
     function loadCSV(csvFilename) {
     
@@ -152,6 +165,17 @@
             reject(error);
           });
       });
+    }
+
+    function loadMarkerData() {
+        return fetch('../../assets/data/sus2021.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Грешка.' + response.statusText);
+            }
+            return response.json();
+        })
+        .catch(error => console.error('Error fetching marker data:', error));
     }
 
     function matchData(columnName) {
@@ -266,6 +290,7 @@
       	onEachFeature: onEachFeature
       }).addTo(map);
 
+
       info.onAdd = function (map) {
 	  	this._div = L.DomUtil.create('div', 'info');
 	  	this.update();
@@ -327,6 +352,40 @@
       
       var infoButton = new L.Control.InfoButton({ position: 'topleft' });
       infoButton.addTo(map);
+
+      var markerGroup = L.layerGroup().addTo(map);
+
+      geojsonData.features.forEach(feature => {
+          var id = feature.properties.ncode;
+          if (id in markerData) { //just 2021 drops for now
+
+            const point = markerData[id];
+            id = id.replace(/^0+/, "");
+
+            var popupContent = `${feature.properties.name}, общ. ${feature.properties.obsht_name} (${id})</b><br>`;
+            popupContent += `<img src="../../assets/2021/spadove/${id}.png" style="width:500px; height:auto;" />`;
+            popupContent += `<br><a href="../../assets/2021/spadove/${id}.html">Виж секции</a>`;
+            popupContent += ' <a href="../2021/spadove.html">За тези данни</a>';
+            
+            L.marker([point[1], point[0]])
+                .addTo(markerGroup)
+                .bindPopup(
+                    popupContent,
+                    {
+                        maxWidth: 600,
+                        minWidth: 300
+                    }
+                );
+          }
+      });
+
+      document.getElementById('toggleMarkers').addEventListener('change', function() {
+          if (this.checked) {
+              map.addLayer(markerGroup);
+          } else {
+              map.removeLayer(markerGroup);
+          }
+      });
 
       const urlParams = new URLSearchParams(window.location.search);
       const lat = parseFloat(urlParams.get('lat'));

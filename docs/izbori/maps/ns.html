@@ -100,7 +100,7 @@
         <select id="columnsDropdown"></select><br>
         <label>
             Карфици:<br>
-            <input type="checkbox" id="toggleMarkers" checked>
+            <input type="checkbox" id="toggleMarkers">
             Топ 200 спадове юли 2021 (<a href="../2021/top.html">инфо</a>)
         </label>
     </div>
@@ -353,7 +353,7 @@
       var infoButton = new L.Control.InfoButton({ position: 'topleft' });
       infoButton.addTo(map);
 
-      var markerGroup = L.layerGroup().addTo(map);
+      var markerGroup = L.layerGroup();//.addTo(map);
 
       geojsonData.features.forEach(feature => {
           var id = feature.properties.ncode;

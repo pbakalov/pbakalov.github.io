@@ -32,6 +32,7 @@
             padding: 5px;
             border-radius: 5px;
             z-index: 1000; 
+            font: 14px/16px Arial, Helvetica, sans-serif; 
         }
         
         .info { 
@@ -99,9 +100,15 @@
         <br>
         <select id="columnsDropdown"></select><br>
         <label>
-            Карфици:<br>
-            <input type="checkbox" id="toggleMarkers">
-            Топ 200 спадове юли 2021 (<a href="../2021/top.html">инфо</a>)
+        <br>Топ спадове юли 2021 (<a href="../2021/top.html" target="_blank">инфо</a>):<br>
+        <select id="pinsDropdown">
+            <option value=""selected>скрити</option>
+            <option value="../../assets/data/sus2021.json">активност</option>
+            <option value="../../assets/data/sus2021gerb.json">ГЕРБ-СДС</option>
+            <option value="../../assets/data/sus2021dps.json">ДПС</option>
+            <option value="../../assets/data/sus2021bsp.json">БСП</option>
+            <!--<option value="../../assets/data/sus2021rbg.json">Републиканци за БГ</option>-->
+        </select><br>
         </label>
     </div>
 </div>
@@ -119,6 +126,7 @@
     let csvData;
     let geojsonData;
     let markerData;
+    let markerGroup;
     let map;
     let geojsonLayer;
 	var info = L.control();
@@ -129,11 +137,9 @@
     });
 
     document.getElementById("columnsDropdown").addEventListener("change", updateColumn);
+    document.getElementById("pinsDropdown").addEventListener("change", updatePins);
 
-    loadGeoJSON().then(() => loadMarkerData()).then(data =>{
-        markerData = data;
-        initializeMap();
-    });
+    loadGeoJSON().then(initializeMap);
 
     function loadCSV(csvFilename) {
     
@@ -167,8 +173,8 @@
       });
     }
 
-    function loadMarkerData() {
-        return fetch('../../assets/data/sus2021.json')
+    function loadMarkerData(file) {
+        return fetch(file)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Грешка.' + response.statusText);
@@ -353,39 +359,7 @@
       var infoButton = new L.Control.InfoButton({ position: 'topleft' });
       infoButton.addTo(map);
 
-      var markerGroup = L.layerGroup();//.addTo(map);
-
-      geojsonData.features.forEach(feature => {
-          var id = feature.properties.ncode;
-          if (id in markerData) { //just 2021 drops for now
-
-            const point = markerData[id];
-            id = id.replace(/^0+/, "");
-
-            var popupContent = `${feature.properties.name}, общ. ${feature.properties.obsht_name} (${id})</b><br>`;
-            popupContent += `<img src="../../assets/2021/spadove/${id}.png" style="width:500px; height:auto;" />`;
-            popupContent += `<br><a href="../../assets/2021/spadove/${id}.html">Виж секции</a>`;
-            popupContent += ' <a href="../2021/spadove.html">За тези данни</a>';
-            
-            L.marker([point[1], point[0]])
-                .addTo(markerGroup)
-                .bindPopup(
-                    popupContent,
-                    {
-                        maxWidth: 600,
-                        minWidth: 300
-                    }
-                );
-          }
-      });
-
-      document.getElementById('toggleMarkers').addEventListener('change', function() {
-          if (this.checked) {
-              map.addLayer(markerGroup);
-          } else {
-              map.removeLayer(markerGroup);
-          }
-      });
+      markerGroup = L.layerGroup().addTo(map);
 
       const urlParams = new URLSearchParams(window.location.search);
       const lat = parseFloat(urlParams.get('lat'));
@@ -642,5 +616,43 @@
 
         return thead + tbody;
     }
+
+    function updatePins (event) {
+      selectedSus = event.target.value;
+      var markerData;
+      markerGroup.clearLayers();
+      if (selectedSus!=='') {
+        loadMarkerData(selectedSus).then(data =>{
+            markerData = data;
+            updateSusLayer(markerData, markerGroup);
+        });
+      };
+    };
+
+    function updateSusLayer(markerData, markerGroup) {
+      geojsonData.features.forEach(feature => {
+          var id = feature.properties.ncode;
+          if (id in markerData) {
+
+            const point = markerData[id];
+            id = id.replace(/^0+/, "");
+
+            var popupContent = `${feature.properties.name}, общ. ${feature.properties.obsht_name} (${id})</b><br>`;
+            popupContent += `<img src="../../assets/2021/spadove/${id}.png" style="width:500px; height:auto;" />`;
+            popupContent += `<br><a href="../../assets/2021/spadove/${id}.html" target="_blank">Виж секции</a>`;
+            popupContent += ' <a href="../2021/top.html" target="_blank">Защо има карфица тук?</a>';
+            
+            L.marker([point[1], point[0]])
+                .addTo(markerGroup)
+                .bindPopup(
+                    popupContent,
+                    {
+                        maxWidth: 600,
+                        minWidth: 300
+                    }
+                );
+          }
+      });
+    };
 
 </script>

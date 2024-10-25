@@ -98,9 +98,11 @@
 
     function updatePlot(jsonData)  {
 
+        const parties = party.split(';');
         const dates = Object.keys(jsonData.eligible_voters);
-        const cols = ['address', 'eligible_voters', 'total', `${party}`]
-        const traces = ['eligible_voters', 'total', `${party}`]
+
+        const cols = ['address', 'n_stations', 'eligible_voters', 'total'].concat(parties);
+        const traces = ['eligible_voters', 'total'].concat(parties);
         
         // sid metadata 
         const meta = document.getElementById('text')
@@ -125,7 +127,6 @@
         meta.innerHTML = tableHTML;
 
         const colorMap = {
-            [party] : 'blue',
             'eligible_voters' : 'gray',
             'total' : 'black',
         }
@@ -134,10 +135,10 @@
             x: dates,
             y: Object.values(jsonData[col]),
             mode: 'lines+markers',
-            type: 'scatter',
+            type: (col in colorMap) ? 'scatter' : 'bar',
             marker: {
                 size: 10,
-                color: colorMap[col],
+                color: colorMap[col]||null,
             },
             name: (renameMap[col]||col),
         }));
@@ -153,6 +154,7 @@
             showlegend : true,
             height: 600,
             width: 800,
+            barmode: 'stack',
         };
 
         Plotly.newPlot('chart', data, layout);

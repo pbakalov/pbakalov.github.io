@@ -43,6 +43,19 @@
             box-shadow: 0 0 15px rgba(0,0,0,0.2); 
             border-radius: 5px; 
         }
+
+        @media (max-width: 768px) {
+          .info {
+            margin-top: 150px !important;
+            margin-left: 10px !important;
+            overflow: scroll;
+            max-height: 55vh;
+          }
+        }
+
+        #minimize-btn {
+          float: right;
+        }
         
         .info h4 { 
             margin: 0 0 5px; 
@@ -483,6 +496,7 @@
         }
 
         if (props) {
+            textbox = '<button style="button" onclick="resetHighlight()" id="minimize-btn">x</button>' + textbox;
             const targetRow  = csvData.find((row) => ('00000' + row.id).slice(-5) === props.ncode); 
 
             var table = generateTableHtmlForRowById(props.ncode);

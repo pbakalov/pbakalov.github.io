@@ -83,6 +83,13 @@
         return data;
     }
 
+    async function getPlaceHist(ekatte, party) {
+        const url=`${ApiBaseUrl}/data?ekatte=${ekatte}&party=${party}`;
+
+        const data = await fetchData(url);
+        return data;
+    }
+
     function showSidDetails(el, sid) {
         getSidResults(el, sid).then(sidData => {
             const newContent = sidDetail(sidData, el, sid);
@@ -96,17 +103,39 @@
         });
     }
 
-    function updatePlot(jsonData)  {
+    function showPlaceHistory(ekatte, party) {
+        getPlaceHist(ekatte, party).then(placeData => {
+            updatePlot(placeData, ekatte);
+        });
+    }
+
+
+    function updatePlot(jsonData, ekatte=null)  {
 
         const parties = party.split(';');
         const dates = Object.keys(jsonData.eligible_voters);
+        
+        let tableHTML = contact;
+        let title;
+        let cols;
+        let placeName;
 
-        const cols = ['address', 'n_stations', 'eligible_voters', 'total'].concat(parties);
+        if (ekatte!==null) {
+            cols = ['n_stations', 'eligible_voters', 'total'].concat(parties);
+            placeName = jsonData['place'][dates[0]]; // TODO municipality, region
+            tableHTML += `<h3>${placeName}</h3>`; 
+            title = `Резултати в ${placeName}`;
+        } else {
+            cols = ['address', 'n_stations', 'eligible_voters', 'total'].concat(parties);
+            tableHTML += `<h3>Данни за секция ${sid}</h3>`; 
+            title = `Резултати секция ${sid}`;
+        }
+
         const traces = ['eligible_voters', 'total'].concat(parties);
         
-        // sid metadata 
+        // metadata 
         const meta = document.getElementById('text')
-        let tableHTML = contact + `<h3>Данни за секция ${sid}</h3>`; 
+
         tableHTML += '<table><thead><tr>';
         tableHTML += '<th>Дата</th>';
         cols.forEach(col => {
@@ -144,7 +173,7 @@
         }));
         
         const layout = {
-            title: `Резултати секция ${sid}`,
+            title: title,
             xaxis: {
                 title: 'Дата'
             },
@@ -243,8 +272,10 @@
     const sid = urlParams.get('sid');
     const party = urlParams.get('party');
 
-    if (!isNaN(ekatte)) {
-        // TODO showSidsByDate()
+    // TODO showSidsByDate()
+    if (!isNaN(ekatte) && party!==null) {
+        showPlaceHistory(ekatte, party);
+    } else if (!isNaN(ekatte)) {
         getSidsByDate(ekatte).then(sidsByDate => {
             const resultHTML = generateHTML(sidsByDate);
             document.getElementById('outputContainer').innerHTML = resultHTML;

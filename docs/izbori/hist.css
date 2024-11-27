@@ -1,0 +1,76 @@
+body, html {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body { 
+    font: 14px/16px Arial, Helvetica, sans-serif; 
+    background: rgba(255,255,255,0.8); 
+}
+
+#outputContainer {
+    max-width: 100%;
+}
+
+#text {
+    max-width: 100%;
+    max-height: 50%;
+}
+
+#chart {
+    max-width: 100%;
+    max-height: 50%;
+}
+
+.combobox-wrapper {
+    position: relative;
+    width: 250px;
+}
+.combobox-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+}
+.options-list {
+    display: none;
+    position: absolute;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-top: none;
+    background-color: white;
+    z-index: 1000;
+}
+.options-list.visible {
+    display: block;
+}
+.options-list div {
+    padding: 8px;
+    cursor: pointer;
+}
+.options-list div:hover {
+    background-color: #f0f0f0;
+}
+.options-list div.selected {
+    background-color: #e0e0e0;
+}
+.multi-select-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 4px;
+}
+.multi-select-tag {
+    background-color: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.multi-select-tag-remove {
+    cursor: pointer;
+    color: red;
+}

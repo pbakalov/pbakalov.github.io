@@ -4,286 +4,36 @@
     <title>Секции</title>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <script src='https://cdn.plot.ly/plotly-2.35.2.min.js'></script>
-    <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
-        body { 
-            padding: 6px 8px; 
-            font: 14px/16px Arial, Helvetica, sans-serif; 
-            background: white; 
-            background: rgba(255,255,255,0.8); 
-            box-shadow: 0 0 15px rgba(0,0,0,0.2); 
-            border-radius: 5px; 
-        }
-
-        #outputContainer {
-            max-width: 100vw;
-            max-height: 100vh;
-        }
-
-        #text {
-            max-width: 100%;
-            max-height: 50%;
-        }
-
-
-        #chart {
-            max-width: 100%;
-            max-height: 50%;
-        }
-        
-    </style>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <link rel="stylesheet" href="hist.css">
 </head>
 
 <body>
-<div id='outputContainer'>
-    <div id='text'>
-        Зарежда се...
-    </div>
-    <div id='chart'></div>
-<div>
+    <div id='outputContainer'>
+        <div id='contact'>
+            'За коментари и намерени грешки: <a href=https://twitter.com/petar_baka>@petar_baka</a>.<br>'
+        </div>
+        <div id='placeAndPartySelection' class="combobox-wrapper">
+            <div>
+                <input type="text" id="placeCombobox" class="combobox-input" placeholder="избери място" list="placeOptions">
+                <datalist id="placeOptions">
+                </datalist>
+            </div>
+            <div>
+                <input type="text" id="partyCombobox" class="combobox-input" placeholder="избери партии">
+                <div class="multi-select-tags" id="partySelectedTags"></div>
+            </div>
+            <div id="partyOptionsList" class="options-list"></div>
+            <input type="hidden" id="partySelectedValue">
+        </div>
+        <div id='text'>
+        </div>
+        <div id='chart'></div>
+    <div>
+    <script src="shared.js"></script>
+    <script src="hist.js"></script>
 </body>
-
-<script>
-    const ApiBaseUrl = 'https://bg-izbori.herokuapp.com/api/';
-
-    async function fetchData(url) {
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-            return data; 
-        } catch (error) {
-            console.error('Error:', error);
-            return null;
-        }
-    }
-
-    async function getSidsByDate(ekatte) {
-        const url=`${ApiBaseUrl}/sids?ekatte=${ekatte}`;
-
-        const data = await fetchData(url);
-        return data;
-    }
-
-    async function getSidResults(el, sid) {
-        const url=`${ApiBaseUrl}/single_election_data?el=${el}&sid=${sid}`;
-
-        const data = await fetchData(url);
-        return data;
-    }
-
-    async function getSidHist(sid, party) {
-        const url=`${ApiBaseUrl}/data?sid=${sid}&party=${party}`;
-
-        const data = await fetchData(url);
-        return data;
-    }
-
-    async function getPlaceHist(ekatte, party) {
-        const url=`${ApiBaseUrl}/data?ekatte=${ekatte}&party=${party}`;
-
-        const data = await fetchData(url);
-        return data;
-    }
-
-    function showSidDetails(el, sid) {
-        getSidResults(el, sid).then(sidData => {
-            const newContent = sidDetail(sidData, el, sid);
-            document.getElementById('outputContainer').innerHTML = newContent;
-        });
-    }
-
-    function showSidHistory(sid, party) {
-        getSidHist(sid, party).then(sidData => {
-            updatePlot(sidData);
-        });
-    }
-
-    function showPlaceHistory(ekatte, party) {
-        getPlaceHist(ekatte, party).then(placeData => {
-            updatePlot(placeData, ekatte);
-        });
-    }
-
-
-    function updatePlot(jsonData, ekatte=null)  {
-
-        const parties = party.split(';');
-        const dates = Object.keys(jsonData.eligible_voters);
-        
-        let tableHTML = contact;
-        let title;
-        let cols;
-        let placeName;
-
-        if (ekatte!==null) {
-            cols = ['n_stations', 'eligible_voters', 'total'].concat(parties);
-            placeName = jsonData['place'][dates[0]]; // TODO municipality, region
-            tableHTML += `<h3>${placeName}</h3>`; 
-            title = `Резултати в ${placeName}`;
-        } else {
-            cols = ['address', 'n_stations', 'eligible_voters', 'total'].concat(parties);
-            tableHTML += `<h3>Данни за секция ${sid}</h3>`; 
-            title = `Резултати секция ${sid}`;
-        }
-
-        const traces = ['eligible_voters', 'total'].concat(parties);
-        
-        // metadata 
-        const meta = document.getElementById('text')
-
-        tableHTML += '<table><thead><tr>';
-        tableHTML += '<th>Дата</th>';
-        cols.forEach(col => {
-            tableHTML += `<th>${(renameMap[col]||col)}</th>`;
-        });
-        tableHTML += '</tr></thead><tbody>';
-        
-        dates.forEach(key => {
-            tableHTML += `<tr><td>${key}</td>`;
-            cols.forEach(col => {
-                const value = jsonData[col][key];
-                tableHTML += `<td>${value}</td>`;
-            });
-            tableHTML += `</tr>`;
-        });
-        tableHTML += '</tbody></table>';
-
-        meta.innerHTML = tableHTML;
-
-        const colorMap = {
-            'eligible_voters' : 'gray',
-            'total' : 'black',
-        }
-
-        const data = traces.map(col => ({
-            x: dates,
-            y: Object.values(jsonData[col]),
-            mode: 'lines+markers',
-            type: (col in colorMap) ? 'scatter' : 'bar',
-            marker: {
-                size: 10,
-                color: colorMap[col]||null,
-            },
-            name: (renameMap[col]||col),
-        }));
-        
-        const layout = {
-            title: title,
-            xaxis: {
-                title: 'Дата'
-            },
-            yaxis: {
-                title: 'Гласове'
-            },
-            showlegend : true,
-            height: 600,
-            width: 800,
-            barmode: 'stack',
-        };
-
-        Plotly.newPlot('chart', data, layout);
-    }
-
-    function sidDetail(sidData, el, sid) {
-        const skipKeys = ['region', 'station', 'admin_reg', 'municipality'];
-
-        // metadata
-        let tableHTML = contact + `<h3>${el} секция ${sid}</h3>`; 
-        tableHTML += '<table><thead><tr><th>Данни за секцията</th><th></th></tr></thead><tbody>';
-        metadataKeys.forEach(key => {
-            if (!renameMap.hasOwnProperty(key)) renameMap[key] = key;
-            const value = sidData[key][sid] || 'н.д.'; 
-            if (!skipKeys.includes(key)) {
-                tableHTML += `<tr><td>${renameMap[key]}</td><td>${value}</td></tr>`;
-            };
-        });
-        tableHTML += '</tbody></table>';
-
-        // votes
-        const partyVotes = [];
-
-        for (const key in sidData) {
-            if (!metadataKeys.includes(key)) {
-                if (!renameMap.hasOwnProperty(key)) renameMap[key] = key;
-                const votes = sidData[key][sid];
-                partyVotes.push({ party: renameMap[key], votes: votes });
-            }
-        }
-
-        partyVotes.sort((a, b) => b.votes - a.votes);
-
-        let voteTableHTML = '<h4>Резултати</h4>'; 
-        voteTableHTML += '<table><thead><tr><th>Партия</th><th>Гласове</th></tr></thead><tbody>';
-        
-        partyVotes.forEach(item => {
-            voteTableHTML += `<tr><td>${item.party}</td><td>${item.votes}</td></tr>`;
-        });
-        
-        voteTableHTML += '</tbody></table>';
-
-        return tableHTML + voteTableHTML;
-    }
-
-    function generateHTML(sidsByDate) {
-        const pageUrl = `${window.location.pathname}`
-        let htmlOutput = contact;
-
-        for (const date in sidsByDate) {
-            htmlOutput += `<strong>${date}</strong><br>`;
-            const sids = sidsByDate[date];
-            sids.forEach(sid => {
-                htmlOutput += `<a href="${pageUrl}?el=${date}&sid=${sid}" onclick="showSidDetails('${date}', '${sid}')">${sid}</a><br>`;
-            });
-            htmlOutput += '<br>';
-        }
-    
-        return htmlOutput;
-    }
-
-    const contact = 'За коментари и намерени грешки: <a href=https://twitter.com/petar_baka>@petar_baka</a>.<br>'
-
-    const metadataKeys = [
-        "place", "address", "admin_reg", "ekatte", "eligible_voters",
-        "municipality", "municipality_name", "station", "region", "region_name"
-    ];
-
-    const renameMap = {
-        'invalid' : 'Невалидни',
-        'eligible_voters' : 'По списък',
-        'n_stations' : 'Секции',
-        'invalid' : 'Невалидни',
-        'total' : 'Общо гласували',
-        'npn' : 'Не подкрепям никого',
-        'place' : 'Населено място',
-        'address' : 'Адрес',
-        'ekatte' : 'ЕКАТТЕ',
-        'municipality_name' : 'Община',
-        'region_name' : 'Избирателен район',
-    }
-
-    const urlParams = new URLSearchParams(window.location.search); 
-    const ekatte = parseInt(urlParams.get('ekatte'));
-    const el = urlParams.get('el');
-    const sid = urlParams.get('sid');
-    const party = urlParams.get('party');
-
-    // TODO showSidsByDate()
-    if (!isNaN(ekatte) && party!==null) {
-        showPlaceHistory(ekatte, party);
-    } else if (!isNaN(ekatte)) {
-        getSidsByDate(ekatte).then(sidsByDate => {
-            const resultHTML = generateHTML(sidsByDate);
-            document.getElementById('outputContainer').innerHTML = resultHTML;
-        });
-    } else if (el!==null && sid!==null) {
-        showSidDetails(el, sid);
-    } else if (sid!==null && party!==null) {
-        showSidHistory(sid, party);
-    }
-
-</script>

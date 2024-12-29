@@ -29,18 +29,21 @@ async function getPlaceHist(ekatte, party) {
 }
 
 function showSidHistory(sid, party) {
+    document.getElementById('chart').innerHTML = loadingMsg;
     getSidHist(sid, party).then(sidData => {
         updatePlot(sidData, party);
     });
 }
 
 function showPlaceHistory(ekatte, party) {
+    document.getElementById('chart').innerHTML = loadingMsg;
     getPlaceHist(ekatte, party).then(placeData => {
         updatePlot(placeData, party, ekatte);
     });
 }
 
 function showSidDetails(el, sid) {
+    document.getElementById('text').innerHTML = loadingMsg;
     getSidResults(el, sid).then(sidData => {
         const newContent = sidDetail(sidData, el, sid);
         document.getElementById('text').innerHTML = newContent;
@@ -48,6 +51,7 @@ function showSidDetails(el, sid) {
 }
 
 function showSidsByDate(ekatte) {
+    document.getElementById('text').innerHTML = loadingMsg;
     // TODO add place details: name, municipality, etc.
     getSidsByDate(ekatte).then(sidsByDate => {
         const resultHTML = generateHTML(sidsByDate);
@@ -135,6 +139,7 @@ function updatePlot(jsonData, parties, ekatte=null)  {
         barmode: 'stack',
     };
 
+    document.getElementById('chart').innerHTML = '';
     Plotly.newPlot('chart', data, layout);
 }
 
@@ -239,9 +244,7 @@ function updateSelection() {
     const partyValue = partySelect.value;
     const placeValue = placeSelect.value; // place (municipality)
     const placeOptions = document.getElementById('placeOptions'); // ekatte matching placeValue
-    const chart = document.getElementById('chart'); // ekatte matching placeValue
-
-    //console.log(placeValue, partyValue, placeValue==='', partyValue==='');
+    const chart = document.getElementById('chart'); 
 
     if (partyValue && placeValue) { // show place history plot
         const ekatte = Array.from(placeOptions.children).find(
@@ -305,6 +308,8 @@ const renameMap = {
     'municipality_name' : 'Община',
     'region_name' : 'Избирателен район',
 }
+
+const loadingMsg = 'Зарежда се ...';
 
 const urlParams = new URLSearchParams(window.location.search); 
 const ekatte = parseInt(urlParams.get('ekatte'));

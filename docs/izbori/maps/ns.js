@@ -1,3 +1,5 @@
+import { getColor, style, highlightFeature, isMobileDevice } from './shared.js';
+
 let csvData;
 let geojsonData;
 let markerData;
@@ -80,54 +82,6 @@ function matchData(columnName) {
   });
 }
 
-function getColor(d) {
-	return d > .8 ? '#800026' :
-		d > .7  ? '#BD0026' :
-		d > .6  ? '#E31A1C' :
-		d > .4  ? '#FC4E2A' :
-		d > .2   ? '#FD8D3C' :
-		d > .1   ? '#FEB24C' :
-		d > .05   ? '#FED976' : '#FFEDA0';
-}
-
-function style(feature) {
-	return {
-		weight: 2,
-		opacity: 1,
-		color: 'white',
-		dashArray: '3',
-		fillOpacity: 0.7,
-        fillColor: getColor(feature.properties[`${selectedColumn}_prop`]),
-	};
-}
-
-function highlightFeature(e) {
-	var layer = e.target;
-
-	layer.setStyle({
-		weight: 5,
-		color: '#666',
-		dashArray: '',
-		fillOpacity: 0.7
-	});
-
-	if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-		layer.bringToFront();
-	}
-
-	info.update(layer.feature.properties, selectedColumn);
-}
-
-function zoomToFeature(e) {
-	map.fitBounds(e.target.getBounds());
-}
-
-
-function resetHighlight(e) {
-	geojsonLayer.resetStyle(e.target);
-	info.update(undefined, selectedColumn);
-}
-
 function onEachFeature(feature, layer) {
     const defaultPopup = `<h3>${feature.properties.name}, общ.${feature.properties.obsht_name}, обл.${feature.properties.oblast_name}</h3>`;
     
@@ -137,10 +91,16 @@ function onEachFeature(feature, layer) {
     );
 
 	layer.on({
-		mouseover: highlightFeature,
-		mouseout: resetHighlight,
-		click: function(e) {
-            zoomToFeature(e);
+        mouseover: function(e) {
+            highlightFeature(e);
+            info.update(layer.feature.properties, selectedColumn);
+        },
+        mouseout: function(e) {
+	        geojsonLayer.resetStyle(e.target);
+	        info.update(undefined, selectedColumn);
+        },
+        click: function(e) {
+            map.fitBounds(e.target.getBounds()); // zoom to feature
             getTsData(selectedColumn, feature.properties.ncode).then(
                 tsData => {
                 const popupContent = JsonToTable(tsData);
@@ -166,7 +126,7 @@ function initializeMap() {
   }).addTo(map);
 
   geojsonLayer = L.geoJson(geojsonData, {
-   	style: style,
+    style: (feature) => style(feature, selectedColumn),
   	onEachFeature: onEachFeature
   }).addTo(map);
 
@@ -178,9 +138,26 @@ function initializeMap() {
   };
 
   info.update = function (props, selectedColumn) {
-  	var textbox = generateTextbox(props, selectedColumn)
+  	var textbox = generateTextbox(props, selectedColumn);
 
-  	this._div.innerHTML = textbox;
+  	this._div.innerHTML = '';
+    if (props && isMobileDevice()) {
+        var closeButton = L.DomUtil.create('button', 'close-btn', this._div);
+        closeButton.innerHTML = 'x';
+        closeButton.style.float = 'right';
+    };
+
+    this._div.innerHTML += textbox;
+
+    if (props && isMobileDevice()) {
+        L.DomEvent.on(closeButton, 'click', function() {
+            info.close();
+        });
+    };
+  };
+
+  info.close = function() { // why does this close the popup in addition to the infobox?
+      info.update(undefined, selectedColumn);
   };
 
   info.addTo(map);
@@ -356,7 +333,6 @@ function generateTextbox(props, selectedColumn) {
     }
 
     if (props) {
-        textbox = '<button style="button" onclick="resetHighlight()" id="minimize-btn">x</button>' + textbox;
         const targetRow  = csvData.find((row) => ('00000' + row.id).slice(-5) === props.ncode); 
 
         var table = generateTableHtmlForRowById(props.ncode);

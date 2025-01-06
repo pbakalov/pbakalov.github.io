@@ -469,7 +469,7 @@ function JsonToTable(data) {
 }
 
 function updatePins (event) {
-  selectedSus = event.target.value;
+  const selectedSus = event.target.value;
   var markerData;
   markerGroup.clearLayers();
   if (selectedSus!=='') {

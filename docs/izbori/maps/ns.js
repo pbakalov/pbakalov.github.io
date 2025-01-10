@@ -90,7 +90,7 @@ function onEachFeature(feature, layer) {
         {maxWidth: 600}
     );
 
-	layer.on({
+    layer.on({
         mouseover: function(e) {
             highlightFeature(e);
             info.update(layer.feature.properties, selectedColumn);
@@ -140,18 +140,20 @@ function initializeMap() {
   info.update = function (props, selectedColumn) {
   	var textbox = generateTextbox(props, selectedColumn);
 
-  	this._div.innerHTML = '';
+    this._div.innerHTML = '';
+    var closeButton;
     if (props && isMobileDevice()) {
-        var closeButton = L.DomUtil.create('button', 'close-btn', this._div);
+        closeButton = L.DomUtil.create('button', 'close-btn', this._div);
         closeButton.innerHTML = 'x';
         closeButton.style.float = 'right';
     };
 
-    this._div.innerHTML += textbox;
+    let contentDiv = L.DomUtil.create("div", "info-content", this._div);
+    contentDiv.innerHTML = textbox;
 
     if (props && isMobileDevice()) {
-        L.DomEvent.on(closeButton, 'click', function() {
-            info.close();
+        L.DomEvent.on(closeButton, 'click', () => {
+            this.close();
         });
     };
   };

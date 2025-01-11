@@ -33,6 +33,15 @@
             z-index: 1000; 
         }
         
+        .dropdown-container select {
+            width: 200px;
+        }
+
+        .dropdown-container select + select {
+            margin-top: 5px;
+            display: block;
+        }
+
         .info { 
             padding: 6px 8px; 
             font: 14px/16px Arial, Helvetica, sans-serif; 
@@ -108,8 +117,16 @@
             <option value="oct23r2">Окт 2023 (2ри тур, кмет)</option>
             <option value="jun24">Юни 2024 НС</option>
         </select>
-        <br>
         <select id="columnsDropdown"></select>
+        <select id="electionRegionsDropdown">
+            <option value="">МИР</option>
+            <option value="2346">23 МИР</option>
+            <option value="2446">24 МИР</option>
+            <option value="2546">25 МИР</option>
+        </select>
+        <select id="cityRegionsDropdown">
+            <option value="">Район</option>
+        </select>
     </div>
 
     <button id="showInfo" class="show-info-button">i</button>
@@ -130,15 +147,84 @@
     let map;
     let geojsonLayer;
 	var info = L.control();
+    let electionDate = 'apr21'
     let selectedColumn = 'ГЕРБ-СДС';
+    let selectedElectionRegion = ''
+    let selectedCityRegion = ''
     
+    // Load parameters from localStorage or URL
+    function loadParameters() {
+        const params = new URLSearchParams(window.location.search);
+        electionDate = params.get('election') || localStorage.getItem('electionDate') || 'apr21';
+        selectedColumn = params.get('column') || localStorage.getItem('selectedColumn') || 'ГЕРБ-СДС';
+        selectedElectionRegion = params.get('electionRegion') || localStorage.getItem('selectedElectionRegion') || '';
+        selectedCityRegion = params.get('cityRegion') || localStorage.getItem('selectedCityRegion') || '';
+    }
+
+    // Save parameters to localStorage and update URL
+    function saveParameters() {
+        localStorage.setItem('electionDate', electionDate);
+        localStorage.setItem('selectedColumn', selectedColumn);
+        localStorage.setItem('selectedElectionRegion', selectedElectionRegion);
+        localStorage.setItem('selectedCityRegion', selectedCityRegion);
+
+        const params = new URLSearchParams();
+        params.set('election', electionDate);
+        params.set('column', selectedColumn);
+        if (selectedElectionRegion) params.set('electionRegion', selectedElectionRegion);
+        if (selectedCityRegion) params.set('cityRegion', selectedCityRegion);
+
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        history.pushState(null, '', newUrl);
+    }
+
+    // Load parameters on page load
+    loadParameters();
+
     document.getElementById("csvDropdown").addEventListener("change", function(event) {
-        updateGeojson(event).then(populateDropdown); 
+        electionDate = event.target.value;
+        saveParameters();
+        updateGeojson(electionDate).then(populateDropdowns);
     });
 
     document.getElementById('showInfo').addEventListener('click', showInfoBox);
 
-    loadGeoJSON('apr21').then(initializeMap); 
+    loadGeoJSON(electionDate).then(initializeMap);
+
+    const electionRegions = {
+        "2346": "23 МИР",
+        "2446": "24 МИР",
+        "2546": "25 МИР",
+    }
+
+    const cityRegions = {
+        "234617": "Витоша",
+        "234602": "Красно село",
+        "234615": "Младост",
+        "234623": "Панчарево",
+        "234610": "Триадица",
+        "234616": "Студентски",
+        "234608": "Изгрев",
+        "234609": "Лозенец",
+        "244622": "Кремиковци",
+        "244601": "Средец",
+        "244607": "Слатина",
+        "244614": "Искър",
+        "244604": "Оборище",
+        "244606": "Подуяне",
+        "244603": "Възраждане",
+        "244605": "Сердика",
+        "254620": "Връбница",
+        "254619": "Люлин",
+        "254613": "Надежда",
+        "254611": "Красна поляна",
+        "254612": "Илинден",
+        "254618": "Овча Купел",
+        "254621": "Нови Искър",
+        "254624": "Банкя",
+    };
+    
+    const grades = [10, 30, 50, 70, 90, 110, 130, 150];
 
     function loadCSV(el_date) {
         const csvFilename = "../../assets/data/mestni/sofia_" + el_date + "_pct.csv";
@@ -159,12 +245,20 @@
         });
     }
 
-    function updateGeojson(event) {
-        const el_date = event.target.value;
-    
+    function updateGeojson(el_date) {
         return loadGeoJSON(el_date)
             .then(() => {
                 map.removeLayer(geojsonLayer);
+                const filteredFeatures = geojsonData.features.filter(
+                    ({ properties }) => {
+                        const sectionId = properties.id || properties.ID || properties.index
+                        // Filter for election region based on district so it works for local elections too
+                        return (!selectedElectionRegion || Object.keys(cityRegions).find(x => sectionId.substring(2, 6) === x.substring(2)).substring(0, 2) === selectedElectionRegion.substring(0, 2) )
+                        // Filter based on city region without the election region so it works for local elections too
+                            && (!selectedCityRegion || sectionId.substring(2, 6) === selectedCityRegion.substring(2))
+                    }
+                )
+                geojsonData.features = filteredFeatures
     
                 geojsonLayer = L.geoJson(geojsonData, {
                     style: style,
@@ -214,7 +308,7 @@
 			color: 'white',
 			dashArray: '3',
 			fillOpacity: 0.7,
-            fillColor: getColor(feature.properties[selectedColumn]),
+            fillColor: getColor(Math.round(feature.properties[selectedColumn] * feature.properties.total)),
 		};
 	}
 
@@ -281,11 +375,14 @@
         var selectedYearText = selectedYear.options[selectedYear.selectedIndex].textContent;;
         var table = ''; 
 	  	var textbox = '<h4>Резултати ' + selectedColumn + ' (' + selectedYearText + ')</h4>';
+        let targetRows = csvData.filter(row => !!row.id);
 
         if (props) {
-            table = generateTableHtmlForRowById(props.sid);
+            targetRows = targetRows.filter((row) => (row.id + '').startsWith(props.sid))
+            table = generateTableHtmlForRows(targetRows);
 
-            textbox += '<b>Секция ' + props.sid + '</b><br>';
+            textbox += '<b>Секция ' + props.sid + '</b>';
+            textbox += '&nbsp;&nbsp;Район: <b>' + getCityRegionName(props.sid.substring(2, 6)) + '</b><br>';
 
             if (selectedColumn !== 'активност') {
                 textbox += selectedColumn + ' гласове: ' +  Math.round(props[selectedColumn]*props['total']) + '<br>' 
@@ -301,7 +398,29 @@
             textbox += 'Избиратели по списък: ' +  props['eligible_voters'] + '<br>'
             textbox += `Валидни гласове/избиратели по списък: ${isNaN(props['активност']) ? props['активност'] : props['активност'].toFixed(2)}<br>`
         } else {
-            textbox += 'Посочете секция.'
+            targetRows = selectedCityRegion
+              ? targetRows.filter((row) => (row.id + '').substring(2, 6) === selectedCityRegion.substring(2))
+              : selectedElectionRegion
+                ? targetRows.filter((row) => Object.keys(cityRegions).find(x => (row.id + '').substring(2, 6) === x.substring(2)).substring(0, 2) === selectedElectionRegion.substring(0, 2))
+              : targetRows;
+
+            textbox += 'Общ резултат за <b>'
+              + (selectedCityRegion
+                ? 'Район ' + cityRegions[selectedCityRegion]
+                : selectedElectionRegion
+                  ? electionRegions[selectedElectionRegion]
+                  : 'Столична община'
+                )
+              + '</b><br>';
+            if (selectedColumn !== 'активност') {
+                textbox += selectedColumn + ' гласове: ' + targetRows.reduce((acc, x) => acc + Math.round(x[selectedColumn] * x.total), 0) + '<br>' 
+            } else {
+                // TODO: breakdown valid votes, invalid votes, total 
+                // TODO: breakdown initial voter list, added to voter list, total 
+                textbox += 'Общо валидни гласове: ' + targetRows.reduce((acc, x) => acc + Math.round(x[selectedColumn] * x.eligible_voters), 0) + '<br>' 
+                textbox += 'Избиратели по списък: ' +  targetRows.reduce((acc, x) => acc + x.eligible_voters, 0) + '<br>'
+            }
+            textbox += generateTableHtmlForRows(targetRows)
         };
 
 	  	this._div.innerHTML = textbox;
@@ -314,7 +433,6 @@
       legend.onAdd = function (map) {
 
           var div = L.DomUtil.create('div', 'info legend');
-          var grades = [0, .1, .2, .3, .4, .5, .6, .7, .8];
           var labels = [];
           var from, to;
 
@@ -333,12 +451,15 @@
 
       legend.addTo(map);
 
-      populateDropdown();
-      document.getElementById("columnsDropdown").addEventListener("change", updateColumn);
+      populateDropdowns();
+        
+        // Set initial dropdown values
+        document.getElementById("csvDropdown").value = electionDate;
+        document.getElementById("electionRegionsDropdown").value = selectedElectionRegion;
+        document.getElementById("cityRegionsDropdown").value = selectedCityRegion;
     }
     
-    
-    function populateDropdown() {
+    function populateDropdowns() {
       const dropdown = document.getElementById("columnsDropdown");
       const columns = Object.keys(csvData[0]);
       let parties = [];
@@ -363,34 +484,84 @@
         dropdown.value = selectedColumn;
       };
 
-      matchData(selectedColumn);
-      geojsonLayer.setStyle(feature => {
-        return {
-          fillColor: getColor(feature.properties[selectedColumn]),
-          
-        };
-      });
+      updateColumn({ target: { value: selectedColumn } })
+      dropdown.removeEventListener("change", updateColumn);
+      dropdown.addEventListener("change", updateColumn);
 
-      info.update(undefined, selectedColumn);
+      populateElectionRegionsDropdown();
+      populateCityRegionsDropdown(selectedElectionRegion);
+    }
+
+    function updateFillData() {
+        updateColumn({ target: { value: selectedColumn } })
+    }
+
+    function changeSelectedElectionRegion(event) {
+        selectedElectionRegion = event.target.value;
+        saveParameters();
+        populateCityRegionsDropdown(selectedElectionRegion);
+        updateGeojson(electionDate).then(updateFillData);
+    }
+
+    function getCityRegionName(municipalityRegionCode) {
+        return Object.entries(cityRegions).find(([prefix, name]) => prefix.substring(2, 6) === municipalityRegionCode)[1]
+    }
+
+    function populateElectionRegionsDropdown() {
+        const dropdown = document.getElementById('electionRegionsDropdown')
+        dropdown.removeEventListener('change', changeSelectedElectionRegion)
+        dropdown.addEventListener("change", changeSelectedElectionRegion);
+    }
+
+    function changeSelectedCityRegion(event) {
+        selectedCityRegion = event.target.value;
+        saveParameters();
+        updateGeojson(electionDate).then(updateFillData);
+    }
+
+    function populateCityRegionsDropdown(prefixFilter = '') {
+        const dropdown = document.getElementById('cityRegionsDropdown')
+        dropdown.removeEventListener('change', changeSelectedCityRegion)
+
+        // remove dropdown options after first
+        while (dropdown.options.length > 1) {
+            dropdown.remove(1);
+        }
+
+        Object.entries(cityRegions)
+            // Filter city regions to matching election regions
+            .filter(([prefix, name]) => prefix.startsWith(prefixFilter))
+            // Sort city regions by name
+            .sort(([prefixA, nameA], [prefixB, nameB]) => nameA.localeCompare(nameB))
+            .forEach(([prefix, name]) => {
+                const option = document.createElement('option')
+                option.value = prefix
+                option.textContent = name
+                if (option.value === selectedCityRegion) {
+                  option.selected = true
+                }
+                dropdown.appendChild(option)
+            })
+        if (dropdown.value !== selectedCityRegion) {
+          selectedCityRegion = ''
+        }
+        dropdown.addEventListener('change', changeSelectedCityRegion);
     }
     
     function updateColumn(event) {
       selectedColumn = event.target.value;
+      saveParameters();
       matchData(selectedColumn);
       geojsonLayer.setStyle(feature => {
         return {
-          fillColor: getColor(feature.properties[selectedColumn]),
-          
+          fillColor: getColor(Math.round(feature.properties[selectedColumn] * feature.properties.total)),
         };
       });
       info.update(undefined, selectedColumn);
     }
 
-    function generateTableHtmlForRowById(targetId) {
-        
-        const targetRow  = csvData.find((row) => ('0000000' + row.id).slice(-9) === targetId); 
-
-        if (!targetRow) return '';
+    function generateTableHtmlForRows(targetRows) {
+        if (targetRows.length === 0) return '';
     
         let html = '<table>';
     
@@ -401,15 +572,16 @@
         html += '</tr></thead>';
     
         html += '<tbody><tr>';
-        for (let key in targetRow) {
-            if (key !== "total" && key !== "id" && key !== 'eligible_voters' && key !== 'активност') {  
-                const originalValue = targetRow[key];
-                const multipliedValue = originalValue * targetRow.total;
+        const allTotal = targetRows.reduce((acc, x) => acc + parseInt(x.total, 10), 0)
+        for (let key in targetRows[0]) {
+            if (key !== "total" && key !== "id" && key !== 'eligible_voters' && key !== 'активност') {
+                const votes = targetRows.reduce((acc, x) => acc + Math.round(x[key] * parseInt(x.total, 10)), 0)
+                const percentage = votes / allTotal * 100
 
                 html += `<tr>`;
                 html += `<td>${key}</td>`;
-                html += `<td>${Math.round(multipliedValue)}</td>`;
-                html += `<td>${isNaN(originalValue) ? originalValue : originalValue.toFixed(2)}</td>`;
+                html += `<td>${votes}</td>`;
+                html += `<td>${isNaN(percentage) ? percentage : percentage.toFixed(2) + '%'}</td>`;
                 html += `</tr>`;
             }
         }
@@ -428,25 +600,26 @@
     
     function getColor(d) {
         const colors = [ // check out https://colorbrewer2.org/?type=sequential&scheme=YlOrRd&n=9
-            [255,255,204],
-            [255,237,160],
-            [254,217,118],
-            [254,178,76],
-            [253,141,60],
-            [252,78,42],
-            [227,26,28],
-            [189,0,38],
-            [128,0,38]
+            [255,255,245],
+            [255,247,245],
+            [255,247,236],
+            [253,212,158],
+            [254,232,200],
+            [254,230,192],
+            [239,101,72],
+            [215,48,31],
+            [179,0,0],
         ];
+
+        if (isNaN(d) || d <= 0) return 'rgb(' + colors[0].join(',') + ')';
+        if (d >= 150) return 'rgb(' + colors[colors.length - 1].join(',') +')';
+
+        const index = grades.findIndex(x => d < x);
+        // const factor = (d / 65) - index;
+        
+        return 'rgb(' + colors[index].join(',') + ')'
     
-    	if (isNaN(d)) return 'rgb(255,255,204)';
-        if (d <= 0) return 'rgb(255,255,204)';
-        if (d >= 0.8) return 'rgb(128,0,38)';
-    
-        const index = Math.floor(d * 10); 
-        const factor = (d * 10) - index;  
-    
-        return interpolateColor(colors[index], colors[index + 1], factor);
+        // return interpolateColor(colors[index], colors[index + 1], factor);
     }
 
     function showInfoBox() {

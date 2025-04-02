@@ -78,7 +78,7 @@ function updatePlot(jsonData, parties, ekatte=null)  {
         tableHTML += `<h3>${placeName}</h3>`; 
         title = `Резултати в ${placeName}`;
     } else { // SID plot
-        cols = ['address', 'n_stations', 'eligible_voters', 'total'].concat(parties);
+        cols = ['address', 'place', 'n_stations', 'eligible_voters', 'total'].concat(parties);
         tableHTML += `<h3>Данни за секция ${sid}</h3>`; 
         title = `Резултати секция ${sid}`;
     }

@@ -74,8 +74,10 @@ function updatePlot(jsonData, parties, ekatte=null)  {
 
     if (ekatte!==null) { // ekatte plot
         cols = ['n_stations', 'eligible_voters', 'total'].concat(parties);
-        placeName = jsonData['place'][dates[0]]; // TODO municipality, region
-        tableHTML += `<h3>${placeName}</h3>`; 
+        placeName = jsonData['place'][dates[0]]; 
+        munName = jsonData['municipality_name'][dates[dates.length-1]]; // TODO use NSI data instead of CEC data
+        regName = jsonData['region_name'][dates[0]];
+        tableHTML += `<h3>${placeName}, общ. ${munName}, ${regName}</h3>`; 
         title = `Резултати в ${placeName}`;
     } else { // SID plot
         cols = ['address', 'place', 'n_stations', 'eligible_voters', 'total'].concat(parties);

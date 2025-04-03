@@ -136,9 +136,11 @@ function updatePlot(jsonData, parties, ekatte=null)  {
             title: 'Гласове'
         },
         showlegend : true,
-        height: 600,
-        width: 800,
         barmode: 'stack',
+        responsive: true,
+        autosize: true,
+        width: Math.min(800, window.innerWidth - 20), // 20px padding
+        height: Math.min(600, window.innerHeight * 0.8) // 80% of viewport height
     };
 
     document.getElementById('chart').innerHTML = '';

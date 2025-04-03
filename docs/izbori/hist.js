@@ -139,8 +139,8 @@ function updatePlot(jsonData, parties, ekatte=null)  {
         barmode: 'stack',
         responsive: true,
         autosize: true,
-        width: Math.min(800, window.innerWidth - 20), // 20px padding
-        height: Math.min(600, Math.max(200, window.innerHeight * 0.8)) // 80% of viewport height but not less than 300
+        width: Math.min(800, window.innerWidth - 20),
+        height: Math.min(600, Math.max(250, window.innerHeight * 0.8)) // 80% of viewport height but >250 and <800
     };
 
     document.getElementById('chart').innerHTML = '';

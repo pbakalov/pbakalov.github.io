@@ -140,7 +140,7 @@ function updatePlot(jsonData, parties, ekatte=null)  {
         responsive: true,
         autosize: true,
         width: Math.min(800, window.innerWidth - 20),
-        height: Math.min(600, Math.max(250, window.innerHeight * 0.8)) // 80% of viewport height but >250 and <800
+        height: Math.min(600, Math.max(250, window.innerHeight * 0.8)), // 80% of viewport height but >250 and <800
     };
 
     document.getElementById('chart').innerHTML = '';
@@ -256,6 +256,9 @@ function updateSelection() {
         ).dataset.value;
         showPlaceHistory(ekatte, partyValue);
         updateUrl(ekatte, null, partyValue);
+    } else if (partyValue && sid) { // show sid history plot
+        showSidHistory(sid, partyValue);
+        updateUrl(null, sid, partyValue);
     } else if (placeValue) { // show SIDs by date
         const ekatte = Array.from(placeOptions.children).find(
             option => option.value === placeValue
@@ -264,13 +267,12 @@ function updateSelection() {
         showSidsByDate(ekatte);
         chart.innerHTML = '';
     } else if (partyValue) {
-        const partyLabels = partyValue.split(',').map(value => {
+        const partyLabels = partyValue.split(',').map(value => { // wtf?
             const partyOption = document.querySelector(`#partyOptionsList div[data-value="${value}"]`);
             return partyOption ? partyOption.textContent : value;
         });
         updateUrl(null, null, partyValue);
     }
-
 }
 
 function updateUrl (ekatte=null, sid=null, party=null, el=null) {
@@ -332,25 +334,23 @@ const partyCombobox = new CSVCombobox('../assets/data/parties.csv', { // TODO ge
 });
 
 populateComboBox(
-    "../../assets/data/place_data.csv", //TODO get place data from skriptove_za_izbori repo
+    "../../assets/data/place_data.csv", //TODO get place data from API/repo
     "placeCombobox", 
     "placeOptions"
 ).then(() => {
-    //TODO all cases: update party selection input fields
     if (!isNaN(ekatte) && party!==null) {
-        showPlaceHistory(ekatte, party);
         updatePlaceInput(ekatte);
+        partyCombobox.setOptions(party.split(';'));
     } else if (!isNaN(ekatte) && el!==null) {
         //TODO showPlaceDetails(el, ekatte);
         updatePlaceInput(ekatte);
     } else if (!isNaN(ekatte)) {
-        //TODO add sidHistory link next to each SID (default to GERB/DPS)
         showSidsByDate(ekatte);
         updatePlaceInput(ekatte);
     } else if (el!==null && sid!==null) {
         showSidDetails(el, sid);
     } else if (sid!==null && party!==null) {
-        showSidHistory(sid, party);
+        partyCombobox.setOptions(party.split(';'));
     } else {
         document.getElementById('text').innerHTML = '';
     }

@@ -155,6 +155,7 @@ class CSVCombobox {
             this.input.value = label;
         }
 
+
         // Update hidden input with comma-separated values
         this.hiddenValueInput.value = Array.from(this.selectedValues).join(this.delimiter);
         this.hiddenValueInput.dispatchEvent(new Event('change'));
@@ -206,6 +207,26 @@ class CSVCombobox {
         this.input.placeholder = this.selectedValues.size 
             ? `${this.selectedValues.size} избрани` 
             : 'избери партии';
+    }
+
+    setOptions(selectedOptions) { // pass options "from outside"
+        this.selectedValues.clear();
+
+        // add new options (& validate)
+        selectedOptions.forEach(value => {
+            if (this.allOptions.some(option => option[0].toLowerCase() === value.toLowerCase())) {
+                this.selectedValues.add(value);
+            };
+        });
+
+        // update tags below combobox
+        this.updateMultiSelectDisplay();
+        // update background colors of the selected options
+        this.renderOptions();
+
+        // update this.hiddenValueInput.value + dispatch event
+        this.hiddenValueInput.value = Array.from(this.selectedValues).join(this.delimiter);
+        this.hiddenValueInput.dispatchEvent(new Event('change'));
     }
 
     showOptions() {

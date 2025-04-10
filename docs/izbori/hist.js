@@ -196,7 +196,7 @@ function generateHTML(sidsByDate) {
         const sids = sidsByDate[date];
         sids.forEach(sid => {
             htmlOutput += `<a href="${pageUrl}?el=${date}&sid=${sid}" onclick="showSidDetails('${date}', '${sid}')">${sid}</a> `;
-            htmlOutput += `<a href="${pageUrl}?sid=${sid}&party=ГЕРБ;ГЕРБ-СДС;ДПС;ДПС-Пеев;ДПС-Доган">история</a><br>`;
+            htmlOutput += `<a href="${pageUrl}?sid=${sid}&party=${defaultParties}">история</a><br>`;
         });
         htmlOutput += '<br>';
     }
@@ -316,6 +316,7 @@ const renameMap = {
 }
 
 const loadingMsg = 'Зарежда се ...';
+const defaultParties = 'ГЕРБ;ГЕРБ-СДС;ДПС;ДПС-Пеев;ДПС-Доган';
 
 const urlParams = new URLSearchParams(window.location.search); 
 const ekatte = parseInt(urlParams.get('ekatte'));

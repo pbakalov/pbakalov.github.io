@@ -103,7 +103,7 @@ function onEachFeature(feature, layer) {
             map.fitBounds(e.target.getBounds()); // zoom to feature
             getTsData(selectedColumn, feature.properties.ncode).then(
                 tsData => {
-                const popupContent = JsonToTable(tsData);
+                const popupContent = JsonToTable(tsData); // TODO show figure instead of table
                 const sids = `<br><a href="../hist.html?ekatte=${feature.properties.ncode}">виж секции</a>`;
                 layer.setPopupContent(
                     `${defaultPopup}${popupContent}${sids}`
@@ -435,7 +435,7 @@ async function getTsData(party, ekatte) {
 }
 
 function JsonToTable(data) {
-    const skip = ['place', 'region_name'];
+    const skip = ['place', 'region_name', 'invalid', 'municipality_name'];
     const renameMap = {
         'invalid' : 'Невалидни',
         'eligible_voters' : 'По списък',
@@ -447,9 +447,8 @@ function JsonToTable(data) {
 
     let thead = '<table><thead><tr><th>Дата</th>';
     for (let key in data) {
-        if (!renameMap.hasOwnProperty(key)) renameMap[key] = key;
         if (!skip.includes(key))  {
-            thead += `<th>${renameMap[key]}</th>`;
+            thead += `<th>${renameMap[key]||key}</th>`;
         }
     }
     thead += '</tr></thead>';

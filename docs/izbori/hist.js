@@ -1,32 +1,5 @@
-const ApiBaseUrl = 'https://bg-izbori.herokuapp.com/api/';
-
-async function getSidsByDate(ekatte) {
-    const url=`${ApiBaseUrl}/sids?ekatte=${ekatte}`;
-
-    const data = await fetchData(url);
-    return data;
-}
-
-async function getSidResults(el, sid) {
-    const url=`${ApiBaseUrl}/single_election_data?el=${el}&sid=${sid}`;
-
-    const data = await fetchData(url);
-    return data;
-}
-
-async function getSidHist(sid, party) {
-    const url=`${ApiBaseUrl}/data?sid=${sid}&party=${party}`;
-
-    const data = await fetchData(url);
-    return data;
-}
-
-async function getPlaceHist(ekatte, party) {
-    const url=`${ApiBaseUrl}/data?ekatte=${ekatte}&party=${party}`;
-
-    const data = await fetchData(url);
-    return data;
-}
+import { getSidsByDate, getSidResults, getSidHist, getPlaceHist } from './api_utils.js'
+import { CSVCombobox } from './shared.js'
 
 function showSidHistory(sid, party) {
     document.getElementById('chart').innerHTML = loadingMsg;
@@ -71,6 +44,8 @@ function updatePlot(jsonData, parties, ekatte=null)  {
     let title;
     let cols;
     let placeName;
+    let munName;
+    let regName;
 
     if (ekatte!==null) { // ekatte plot
         cols = ['n_stations', 'eligible_voters', 'total'].concat(parties);
@@ -333,6 +308,7 @@ const partyCombobox = new CSVCombobox('../assets/data/parties.csv', { // TODO ge
     labelColumnIndex: 1, 
     multiSelect: true
 });
+await partyCombobox.init(); // some overhead, as it's called in the constructor
 
 populateComboBox(
     "../../assets/data/place_data.csv", //TODO get place data from API/repo

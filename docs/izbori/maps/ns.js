@@ -1,4 +1,5 @@
 import { getColor, style, highlightFeature, isMobileDevice } from './shared.js';
+import { getPlaceHist } from '../api_utils.js';
 
 let csvData;
 let geojsonData;
@@ -420,23 +421,16 @@ async function getTsData(party, ekatte) {
     const renameMap = {
         'не подкрепям никого' : 'npn'
     }
-
     const p_ = renameMap[party] || party;
 
-    try {
-        const response = await fetch(`https://bg-izbori.herokuapp.com/api/data?party=${p_}&ekatte=${ekatte}`);
-        const tsData = await response.json();
+    const tsData = await getPlaceHist(ekatte, p_);
 
-        return tsData; 
-    } catch (error) {
-        console.error('Error:', error);
-        return null;
-    }
+    return tsData;
 }
 
 function JsonToTable(data) {
     const skip = ['place', 'region_name', 'invalid', 'municipality_name'];
-    const renameMap = {
+    const renameMap = { // TODO move to shared
         'invalid' : 'Невалидни',
         'eligible_voters' : 'По списък',
         'n_stations' : 'Секции',

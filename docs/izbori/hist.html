@@ -9,21 +9,33 @@
 
 <body>
     <div id='outputContainer'>
-        <div id='contact'>
-            За коментари и намерени грешки: <a href=https://twitter.com/petar_baka>@petar_baka</a>.<br>
-        </div>
-        <div id='placeAndPartySelection' class="combobox-wrapper">
-            <div>
-                <input type="text" id="placeCombobox" class="combobox-input" placeholder="избери място" list="placeOptions">
-                <datalist id="placeOptions">
-                </datalist>
+        <div class="mobile-menu" id="mobileMenu">
+            <div class="menu-header" id="menuHeader">
+                <div class="menu-summary">
+                    <span class="selected-place">Избери място</span>
+                    <span class="selected-parties">Избери партии</span>
+                </div>
+                <button class="toggle-button">▲</button>
             </div>
-            <div>
-                <input type="text" id="partyCombobox" class="combobox-input" placeholder="избери партии">
-                <div class="multi-select-tags" id="partySelectedTags"></div>
+            
+            <div class="menu-content" id="menuContent">
+                <div id='contact'>
+                    За коментари и намерени грешки: <a href=https://twitter.com/petar_baka>@petar_baka</a>.<br>
+                </div>
+                <div id='placeAndPartySelection' class="combobox-wrapper">
+                    <div>
+                        <input type="text" id="placeCombobox" class="combobox-input" placeholder="избери място" list="placeOptions">
+                        <datalist id="placeOptions">
+                        </datalist>
+                    </div>
+                    <div>
+                        <input type="text" id="partyCombobox" class="combobox-input" placeholder="избери партии">
+                        <div class="multi-select-tags" id="partySelectedTags"></div>
+                    </div>
+                    <div id="partyOptionsList" class="options-list"></div>
+                    <input type="hidden" id="partySelectedValue">
+                </div>
             </div>
-            <div id="partyOptionsList" class="options-list"></div>
-            <input type="hidden" id="partySelectedValue">
         </div>
         <div id='text'>
         </div>

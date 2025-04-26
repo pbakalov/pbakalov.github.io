@@ -74,3 +74,125 @@ body {
     cursor: pointer;
     color: red;
 }
+
+.toggle-button {
+    /* only show on mobile devices */
+    display : none;
+}
+
+@media (max-width: 768px) {
+    /* Hide tables on mobile */
+    #text {
+        display: none;
+    }
+
+    /* Full-screen chart */
+    #chart {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        max-height: none;
+        margin-top: 70px; /* Height of collapsed menu header */
+    }
+
+    /* Mobile Menu Styles */
+    .mobile-menu {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: white;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        transition: transform 0.3s ease;
+    }
+
+    .menu-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+        background: white;
+        border-bottom: 1px solid #eee;
+        min-height: 40px;
+        cursor: pointer;
+    }
+
+    .menu-summary {
+        display: flex;
+        flex-direction: column;
+        font-size: 12px;
+    }
+
+    .menu-summary .selected-place {
+        font-weight: bold;
+        margin-bottom: 2px;
+    }
+
+    .menu-summary .selected-parties {
+        color: #666;
+    }
+
+    .toggle-button {
+        display: block;
+        background: none;
+        border: none;
+        font-size: 20px;
+        padding: 5px;
+        transition: transform 0.3s;
+    }
+
+    .menu-content {
+        background: white;
+        padding: 15px;
+        max-height: 70vh;
+        overflow-y: auto;
+        transition: max-height 0.3s ease;
+    }
+
+    /* Collapsed state */
+    .mobile-menu.collapsed .menu-content {
+        display: none;
+    }
+
+    .mobile-menu.collapsed .toggle-button {
+        transform: rotate(180deg);
+    }
+
+    /* Adjust existing combobox styles for mobile */
+    .combobox-wrapper {
+        width: 100%;
+        margin: 0;
+    }
+
+    .combobox-input {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px; /* Prevent iOS zoom */
+    }
+
+    #contact {
+        margin-bottom: 15px;
+    }
+
+    .multi-select-tags {
+        flex-wrap: wrap;
+        gap: 5px;
+        margin: 5px 0;
+    }
+
+    .options-list {
+        position: fixed;
+        left: 0;
+        right: 0;
+        max-height: 50vh;
+        width: auto;
+        margin: 0 15px;
+    }
+
+    .options-list div {
+        padding: 12px 8px;
+    }
+}

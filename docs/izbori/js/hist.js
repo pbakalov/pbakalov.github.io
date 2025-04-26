@@ -1,5 +1,36 @@
 import { getSidsByDate, getSidResults, getSidHist, getPlaceHist } from './api_utils.js'
-import { CSVCombobox } from './shared.js'
+import { CSVCombobox, isMobile } from './shared.js'
+
+function initializeMobileMenu() {
+    if (!isMobile()) return;
+
+    const menu = document.getElementById('mobileMenu');
+    const header = document.getElementById('menuHeader');
+    const summaryPlace = menu.querySelector('.selected-place');
+    const summaryParties = menu.querySelector('.selected-parties');
+
+    // Initial state
+    menu.classList.add('collapsed');
+
+    header.addEventListener('click', () => {
+        menu.classList.toggle('collapsed');
+        const button = header.querySelector('.toggle-button');
+        button.textContent = menu.classList.contains('collapsed') ? '▼' : '▲';
+    });
+
+    function updateMenuSummary() { // possibly merge with updateSelection
+        const placeValue = document.getElementById('placeCombobox').value;
+        const partyValues = Array.from(partyCombobox.selectedValues);
+        
+        summaryPlace.textContent = placeValue || 'Избери място';
+        summaryParties.textContent = partyValues.length ? 
+            `${partyValues.length} избрани партии` : 
+            'Избери партии';
+    }
+
+    partySelect.addEventListener('change', updateMenuSummary);
+    placeSelect.addEventListener('change', updateMenuSummary);
+}
 
 function showSidHistory(sid, party) {
     document.getElementById('chart').innerHTML = loadingMsg;
@@ -62,27 +93,27 @@ function updatePlot(jsonData, parties, ekatte=null)  {
 
     const traces = ['eligible_voters', 'total'].concat(parties);
     
-    // metadata 
-    const meta = document.getElementById('text')
-
-    tableHTML += '<table><thead><tr>';
-    tableHTML += '<th>Дата</th>';
-    cols.forEach(col => {
-        tableHTML += `<th>${(renameMap[col]||col)}</th>`;
-    });
-    tableHTML += '</tr></thead><tbody>';
-    
-    dates.forEach(key => {
-        tableHTML += `<tr><td>${key}</td>`;
+    // metadata (only show if not mobile)
+    if (!isMobile()) {
+        const meta = document.getElementById('text');
+        tableHTML += '<table><thead><tr>';
+        tableHTML += '<th>Дата</th>';
         cols.forEach(col => {
-            const value = jsonData[col][key];
-            tableHTML += `<td>${value}</td>`;
+            tableHTML += `<th>${(renameMap[col]||col)}</th>`;
         });
-        tableHTML += `</tr>`;
-    });
-    tableHTML += '</tbody></table>';
-
-    meta.innerHTML = tableHTML;
+        tableHTML += '</tr></thead><tbody>';
+        
+        dates.forEach(key => {
+            tableHTML += `<tr><td>${key}</td>`;
+            cols.forEach(col => {
+                const value = jsonData[col][key];
+                tableHTML += `<td>${value}</td>`;
+            });
+            tableHTML += `</tr>`;
+        });
+        tableHTML += '</tbody></table>';
+        meta.innerHTML = tableHTML;
+    }
 
     const colorMap = {
         'eligible_voters' : 'gray',
@@ -110,13 +141,35 @@ function updatePlot(jsonData, parties, ekatte=null)  {
         yaxis: {
             title: 'Гласове'
         },
-        showlegend : true,
+        showlegend: true,
         barmode: 'stack',
         responsive: true,
-        autosize: true,
-        width: Math.min(800, window.innerWidth - 20),
-        height: Math.min(600, Math.max(250, window.innerHeight * 0.8)), // 80% of viewport height but >250 and <800
+        autosize: true
     };
+
+    if (isMobile()) {
+        Object.assign(layout, {
+            width: window.innerWidth,
+            height: window.innerHeight - 70, // account for collapsed menu; can we infer the size from the css?
+            margin: {
+                l: 40,
+                r: 20,
+                t: 70, // space for the title
+                b: 20
+            },
+            legend: {
+                orientation: 'h',
+                y: -0.2,
+                x: 0.5,
+                xanchor: 'center'
+            }
+        });
+    } else {
+        Object.assign(layout, {
+            width: Math.min(800, window.innerWidth - 20),
+            height: Math.min(600, Math.max(250, window.innerHeight * 0.8)), // 80% of viewport height but >250 and <800
+        });
+    }
 
     document.getElementById('chart').innerHTML = '';
     Plotly.newPlot('chart', data, layout);
@@ -310,11 +363,20 @@ const partyCombobox = new CSVCombobox('../assets/data/parties.csv', { // TODO ge
 });
 await partyCombobox.init(); // some overhead, as it's called in the constructor
 
+window.addEventListener('resize', () => {
+    const chart = document.getElementById('chart');
+    if (chart.data) {
+        // updatePlot(chart.data, party, ekatte); // good idea, but needs fixing
+        updateSelection();
+    }
+});
+
 populateComboBox(
     "../../assets/data/place_data.csv", //TODO get place data from API/repo
     "placeCombobox", 
     "placeOptions"
 ).then(() => {
+    initializeMobileMenu();
     if (!isNaN(ekatte) && party!==null) {
         updatePlaceInput(ekatte);
         partyCombobox.setOptions(party.split(';'));
@@ -338,4 +400,3 @@ const partySelect = document.getElementById('partySelectedValue');
 
 partySelect.addEventListener('change', updateSelection);
 placeSelect.addEventListener('change', updateSelection);
-

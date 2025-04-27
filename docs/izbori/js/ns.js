@@ -16,6 +16,7 @@ document.getElementById("csvDropdown").addEventListener("change", function(event
 
 document.getElementById("columnsDropdown").addEventListener("change", updateColumn);
 document.getElementById("pinsDropdown").addEventListener("change", updatePins);
+document.getElementById('hideInfo').addEventListener('click', closeInfoBox);
 
 loadGeoJSON().then(initializeMap);
 
@@ -189,7 +190,7 @@ function initializeMap() {
 
   legend.addTo(map);
 
-  L.Control.InfoButton = L.Control.extend({
+  L.Control.InfoButton = L.Control.extend({ // TODO simpler with <button>
       onAdd: function(map) {
           var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
   

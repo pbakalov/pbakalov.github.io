@@ -272,7 +272,7 @@ def generate_markdown_table(cases: List[Dict[str, Any]]) -> str:
     return md
 
 def main():
-    json_file = "./cases_2017_all.json"
+    json_file = "./nk167_cases.json"
 
     # Check if file exists
     if not Path(json_file).exists():
@@ -284,14 +284,14 @@ def main():
     print(f"Loaded {len(cases)} cases")
 
     # Generate HTML table
-    html_output = "./cases_2017_all.html"
+    html_output = "./nk167_cases.html"
     html_content = generate_html_table(cases)
     with open(html_output, 'w', encoding='utf-8') as f:
         f.write(html_content)
     print(f"HTML table saved to {html_output}")
 
     # Generate Markdown table
-    md_output = "./cases_2017_all.md"
+    md_output = "./nk167_cases.md"
     md_content = generate_markdown_table(cases)
     with open(md_output, 'w', encoding='utf-8') as f:
         f.write(md_content)

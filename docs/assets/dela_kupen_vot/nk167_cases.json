@@ -3751,5 +3751,513 @@
     "punishment": "11 месеца лишаване от свобода (отложено за 3 години) + 150 лв. равностойност",
     "penal_code_article": "чл. 167, ал. 2 НК",
     "verdict_type": "appeal_verdict"
+  },
+  {
+    "file_path": "2023/2023-03-13_dupnitsa_dps_efektivna.pdf",
+    "case_number": {
+      "number": "63",
+      "type": "НОХД",
+      "court": "Районен съд - Дупница",
+      "year": 2023
+    },
+    "judgment_date": "14.03.2023",
+    "crime_date": "14.09.2022",
+    "election": {
+      "type": "национални",
+      "year": 2022,
+      "election_date": "02.10.2022"
+    },
+    "accused": {
+      "count": 1,
+      "details": [
+        {
+          "education": "основно образование",
+          "occupation": "безработен",
+          "marital_status": "неженен"
+        }
+      ]
+    },
+    "vote_incentive": {
+      "price_per_vote": "30-100",
+      "currency": "BGN",
+      "description": "парични суми по список"
+    },
+    "beneficiary": {
+      "party": "ДПС",
+      "party_full": "Движение за права и свободи",
+      "candidate": "н.д.",
+      "position": "н.д."
+    },
+    "location": "гр. Дупница, кв. Ценеви",
+    "vote_sellers_mentioned": {
+      "count": 21
+    },
+    "verdict": "виновен",
+    "punishment": "7 месеца лишаване от свобода при първоначален строг режим",
+    "penal_code_article": "чл. 167, ал. 3, вр. с ал. 2, вр. с чл. 20, ал. 2, вр. с ал. 1 НК",
+    "verdict_type": "споразумение"
+  },
+  {
+    "file_path": "2023/2023-03-15_radomir_nohd_30_2023_gerb_opravdatelna.pdf",
+    "case_number": {
+      "number": "30",
+      "type": "НОХД",
+      "court": "Районен съд - Радомир",
+      "year": 2023
+    },
+    "judgment_date": "15.03.2023",
+    "crime_date": "30.09.2022",
+    "election": {
+      "type": "национални",
+      "year": 2022,
+      "election_date": "02.10.2022"
+    },
+    "accused": {
+      "count": 1,
+      "details": [
+        {
+          "education": "средно образование",
+          "occupation": "пенсионер",
+          "marital_status": "женен"
+        }
+      ]
+    },
+    "vote_incentive": {
+      "price_per_vote": "50",
+      "currency": "BGN"
+    },
+    "beneficiary": {
+      "party": "ГЕРБ-СДС",
+      "candidate": "н.д.",
+      "position": "н.д."
+    },
+    "location": "с. И., общ. Радомир",
+    "vote_sellers_mentioned": {
+      "count": 3
+    },
+    "verdict": "невиновен",
+    "punishment": "н.д.",
+    "penal_code_article": "чл. 167, ал. 2, вр. чл. 26, ал. 1 НК",
+    "verdict_type": "trial_verdict"
+  },
+  {
+    "file_path": "2023/2023-04-05_veliko_tarnovo_dps.pdf",
+    "case_number": {
+      "number": "529",
+      "type": "НОХД",
+      "court": "Районен съд - Велико Търново",
+      "year": 2023
+    },
+    "judgment_date": "05.04.2023",
+    "crime_date": "31.03.2023",
+    "election": {
+      "type": "национални",
+      "year": 2023,
+      "election_date": "02.04.2023"
+    },
+    "accused": {
+      "count": 1,
+      "details": [
+        {
+          "education": "средно образование",
+          "occupation": "работи",
+          "marital_status": "женен"
+        }
+      ]
+    },
+    "vote_incentive": {
+      "price_per_vote": "50",
+      "currency": "BGN"
+    },
+    "beneficiary": {
+      "party": "ДПС",
+      "party_full": "Движение за права и свободи",
+      "candidate": "н.д.",
+      "position": "н.д."
+    },
+    "location": "гр. Велико Търново",
+    "vote_sellers_mentioned": {
+      "count": 5
+    },
+    "verdict": "виновен",
+    "punishment": "11 месеца лишаване от свобода (отложено за 3 години) + 5000 BGN глоба",
+    "penal_code_article": "чл. 167, ал. 3 и ал. 2 НК",
+    "verdict_type": "споразумение"
+  },
+  {
+    "file_path": "2023/2023-04-18_dobrichko_zalicheno.pdf",
+    "case_number": {
+      "number": "412",
+      "type": "НОХД",
+      "court": "Районен съд - Добрич",
+      "year": 2023
+    },
+    "judgment_date": "18.04.2023",
+    "crime_date": "02.04.2023",
+    "election": {
+      "type": "национални",
+      "year": 2023,
+      "election_date": "02.04.2023"
+    },
+    "accused": {
+      "count": 1,
+      "details": []
+    },
+    "vote_incentive": {
+      "price_per_vote": "30",
+      "currency": "BGN"
+    },
+    "beneficiary": {
+      "party": "н.д.",
+      "candidate": "н.д.",
+      "position": "н.д."
+    },
+    "location": "общ. Добричка",
+    "vote_sellers_mentioned": {
+      "count": 6
+    },
+    "verdict": "виновен",
+    "punishment": "4 месеца лишаване от свобода (отложено за 3 години) + лишаване от право да заема търговски длъжности",
+    "penal_code_article": "чл. 167, ал. 2 НК",
+    "verdict_type": "споразумение"
+  },
+  {
+    "file_path": "2023/2023-04-26_s_pobeda_dobrichko_dps.pdf",
+    "case_number": {
+      "number": "451",
+      "type": "НОХД",
+      "court": "Районен съд - Добрич",
+      "year": 2023
+    },
+    "judgment_date": "26.04.2023",
+    "crime_date": "02.04.2023",
+    "election": {
+      "type": "национални",
+      "year": 2023,
+      "election_date": "02.04.2023"
+    },
+    "accused": {
+      "count": 1,
+      "details": []
+    },
+    "vote_incentive": {
+      "price_per_vote": "25",
+      "currency": "BGN"
+    },
+    "beneficiary": {
+      "party": "ДПС",
+      "party_full": "Движение за права и свободи",
+      "candidate": "н.д.",
+      "position": "н.д."
+    },
+    "location": "с. Победа, общ. Добричка",
+    "vote_sellers_mentioned": {
+      "count": 1
+    },
+    "verdict": "виновен",
+    "punishment": "4 месеца лишаване от свобода (отложено за 3 години)",
+    "penal_code_article": "чл. 167, ал. 2 НК",
+    "verdict_type": "споразумение"
+  },
+  {
+    "file_path": "2023/2023-05-16_dupnitsa_dps_efektivna.pdf",
+    "case_number": {
+      "number": "501",
+      "type": "НОХД",
+      "court": "Районен съд - Дупница",
+      "year": 2023
+    },
+    "judgment_date": "16.05.2023",
+    "crime_date": "02.04.2023",
+    "election": {
+      "type": "национални",
+      "year": 2023,
+      "election_date": "02.04.2023"
+    },
+    "accused": {
+      "count": 1,
+      "details": []
+    },
+    "vote_incentive": {
+      "price_per_vote": "50 BGN и авточасти",
+      "currency": "BGN",
+      "description": "парични суми и закупуване на по-евтини авточасти"
+    },
+    "beneficiary": {
+      "party": "ДПС",
+      "party_full": "Движение за права и свободи",
+      "candidate": "н.д.",
+      "position": "н.д."
+    },
+    "location": "редактирано",
+    "vote_sellers_mentioned": {
+      "count": 2
+    },
+    "verdict": "виновен",
+    "punishment": "4 месеца лишаване от свобода (при ОБЩ режим) + лишаване от право",
+    "penal_code_article": "чл. 167, ал. 2, вр. чл. 26, ал. 1 НК",
+    "verdict_type": "споразумение"
+  },
+  {
+    "file_path": "2023/2023-07-10_sofia_nadezhda_dps.pdf",
+    "case_number": {
+      "number": "704",
+      "type": "НОХД",
+      "court": "Софийски районен съд",
+      "year": 2023
+    },
+    "judgment_date": "10.07.2023",
+    "crime_date": "02.04.2023",
+    "election": {
+      "type": "национални",
+      "year": 2023,
+      "election_date": "02.04.2023"
+    },
+    "accused": {
+      "count": 1,
+      "details": [
+        {
+          "education": "начално образование",
+          "occupation": "пенсионер по болест",
+          "marital_status": "женен"
+        }
+      ]
+    },
+    "vote_incentive": {
+      "price_per_vote": "20",
+      "currency": "BGN"
+    },
+    "beneficiary": {
+      "party": "ДПС",
+      "party_full": "Движение за права и свободи",
+      "candidate": "н.д.",
+      "position": "н.д."
+    },
+    "location": "гр. София, кв. Надежда",
+    "vote_sellers_mentioned": {
+      "count": 3
+    },
+    "verdict": "виновен",
+    "punishment": "3 месеца лишаване от свобода (отложено за 3 години)",
+    "penal_code_article": "чл. 167, ал. 2 НК",
+    "verdict_type": "споразумение"
+  },
+  {
+    "file_path": "2023/2024-01-05_plovdiv_dps.pdf",
+    "case_number": {
+      "number": "6471",
+      "type": "НОХД",
+      "court": "Софийски градски съд",
+      "year": 2023
+    },
+    "judgment_date": "05.01.2024",
+    "crime_date": "02.04.2023",
+    "election": {
+      "type": "национални",
+      "year": 2023,
+      "election_date": "02.04.2023"
+    },
+    "accused": {
+      "count": 1,
+      "details": [
+        {
+          "education": "основно образование",
+          "occupation": "шофьор",
+          "marital_status": "женен"
+        }
+      ]
+    },
+    "vote_incentive": {
+      "price_per_vote": "30-40",
+      "currency": "BGN"
+    },
+    "beneficiary": {
+      "party": "ДПС",
+      "party_full": "Движение за права и свободи",
+      "candidate": "н.д.",
+      "position": "н.д."
+    },
+    "location": "гр. Пловдив",
+    "vote_sellers_mentioned": {
+      "count": 5
+    },
+    "verdict": "виновен",
+    "punishment": "10 месеца лишаване от свобода (отложено за 3 години)",
+    "penal_code_article": "чл. 167, ал. 2, пр. 2, вр. чл. 26, ал. 1 НК",
+    "verdict_type": "споразумение"
+  },
+  {
+    "file_path": "2023/2024-02-28_nova_zagora_nohd_217_2023_dps_opravdatelna.pdf",
+    "case_number": {
+      "number": "217",
+      "type": "НОХД",
+      "court": "Районен съд - Нова Загора",
+      "year": 2023
+    },
+    "judgment_date": "28.02.2024",
+    "crime_date": "04.04.2021",
+    "election": {
+      "type": "национални",
+      "year": 2021,
+      "election_date": "04.04.2021"
+    },
+    "accused": {
+      "count": 1,
+      "details": [
+        {
+          "education": "неграмотен",
+          "occupation": "безработен",
+          "marital_status": "неженен"
+        }
+      ]
+    },
+    "vote_incentive": {
+      "price_per_vote": "20",
+      "currency": "BGN"
+    },
+    "beneficiary": {
+      "party": "ДПС",
+      "party_full": "Движение за права и свободи",
+      "candidate": "н.д.",
+      "position": "н.д."
+    },
+    "location": "гр. Нова Загора",
+    "vote_sellers_mentioned": {
+      "count": 5
+    },
+    "verdict": "невиновен",
+    "punishment": "н.д.",
+    "penal_code_article": "чл. 167, ал. 2, предл. 1-во НК",
+    "verdict_type": "trial_verdict"
+  },
+  {
+    "file_path": "2023/2024-04-09_plovdiv_dps_opravdatelna.pdf",
+    "case_number": {
+      "number": "4399",
+      "type": "НОХД",
+      "court": "Районен съд - Пловдив",
+      "year": 2023
+    },
+    "judgment_date": "09.04.2024",
+    "crime_date": "02.04.2023",
+    "election": {
+      "type": "национални",
+      "year": 2023,
+      "election_date": "02.04.2023"
+    },
+    "accused": {
+      "count": 1,
+      "details": [
+        {
+          "education": "основно образование",
+          "occupation": "безработен",
+          "marital_status": "женен"
+        }
+      ]
+    },
+    "vote_incentive": {
+      "price_per_vote": "20",
+      "currency": "BGN"
+    },
+    "beneficiary": {
+      "party": "ДПС",
+      "party_full": "Движение за права и свободи",
+      "candidate": "н.д.",
+      "position": "н.д."
+    },
+    "location": "гр. Пловдив",
+    "vote_sellers_mentioned": {
+      "count": 2
+    },
+    "verdict": "невиновен",
+    "punishment": "н.д.",
+    "penal_code_article": "чл. 167, ал. 2, вр. чл. 26, ал. 1 НК",
+    "verdict_type": "trial_verdict"
+  },
+  {
+    "file_path": "2023/2024-06-28_lukovit_zalichena.pdf",
+    "case_number": {
+      "number": "208",
+      "type": "НОХД",
+      "court": "Районен съд - Луковит",
+      "year": 2023
+    },
+    "judgment_date": "28.06.2024",
+    "crime_date": "02.04.2023",
+    "election": {
+      "type": "национални",
+      "year": 2023,
+      "election_date": "02.04.2023"
+    },
+    "accused": {
+      "count": 1,
+      "details": []
+    },
+    "vote_incentive": {
+      "price_per_vote": "40",
+      "currency": "BGN"
+    },
+    "beneficiary": {
+      "party": "н.д.",
+      "candidate": "н.д.",
+      "position": "н.д."
+    },
+    "location": "гр. Луковит, Ловешка област",
+    "vote_sellers_mentioned": {
+      "count": 1
+    },
+    "verdict": "виновен",
+    "punishment": "1 година лишаване от свобода (отложено за 3 години) + 10,000 BGN глоба",
+    "penal_code_article": "чл. 167, ал. 2 вр. чл. 54 и чл. 57, ал. 2 НК",
+    "verdict_type": "trial_verdict"
+  },
+  {
+    "file_path": "2023/2024-11-13_harmanli_metsni_kmet_simeonovgrad_gerb_milena_rangelova.pdf",
+    "case_number": {
+      "number": "244",
+      "type": "НОХД",
+      "court": "Районен съд - Харманли",
+      "year": 2023
+    },
+    "judgment_date": "13.11.2024",
+    "crime_date": "11.07.2021",
+    "election": {
+      "type": "национални",
+      "year": 2021,
+      "election_date": "11.07.2021"
+    },
+    "accused": {
+      "count": 2,
+      "details": [
+        {
+          "education": "висше образование",
+          "occupation": "безработен",
+          "marital_status": "женен"
+        },
+        {
+          "education": "висше образование",
+          "occupation": "управител",
+          "marital_status": "неженен"
+        }
+      ]
+    },
+    "vote_incentive": {
+      "price_per_vote": "25-100",
+      "currency": "BGN",
+      "description": "парични суми"
+    },
+    "beneficiary": {
+      "party": "ГЕРБ",
+      "candidate": "М. Г.а Р.",
+      "position": "кмет на Община Симеоновград"
+    },
+    "location": "гр. Симеоновград",
+    "vote_sellers_mentioned": {
+      "count": 15
+    },
+    "verdict": "виновен",
+    "punishment": "1 година 3 месеца лишаване от свобода (отложено 3 години) + 10,000 BGN глоба",
+    "penal_code_article": "чл. 167, ал. 2 и ал. 4 НК",
+    "verdict_type": "trial_verdict"
   }
 ]

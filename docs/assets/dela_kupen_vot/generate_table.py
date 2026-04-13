@@ -53,12 +53,20 @@ def format_accused(case_data: Dict[str, Any]) -> str:
     """Format accused information"""
     count = case_data['accused']['count']
     details_list = case_data['accused'].get('details', [])
-    if not details_list:
-        return f"{count} обвиняем"
-    details = details_list[0]
-    education = details.get('education', 'н.д.')
-    occupation = details.get('occupation', 'н.д.')
-    return f"{count} обвиняем<br><small>{education}, {occupation}</small>"
+
+    acc = 'обвиняем'
+    if count > 1:
+        acc += 'и'
+
+    ret = f"{count} {acc}"
+
+    for details in details_list:
+        name = details.get('name', 'н.д.')
+        education = details.get('education', 'н.д.')
+        occupation = details.get('occupation', 'н.д.')
+        ret+= f"<br><small>{name}, {education}, {occupation}</small>"
+
+    return ret
 
 def format_vote_incentive(case_data: Dict[str, Any]) -> str:
     """Format vote incentive information"""
@@ -111,7 +119,7 @@ def format_verdict_type(case_data: Dict[str, Any]) -> str:
     verdict_type = escape_html(case_data.get('verdict_type'))
     if verdict_type == 'споразумение':
         return verdict_type
-    return ''
+    return 'решение'
 
 def generate_html_table(cases: List[Dict[str, Any]]) -> str:
     """Generate HTML table from cases"""
@@ -188,9 +196,9 @@ def generate_html_table(cases: List[Dict[str, Any]]) -> str:
                 <th>Съд</th>
                 <th>член от НК</th>
                 <th>Присъда</th>
-                <th>Присъда бележки</th>
+                <th>Вид акт</th>
                 <th>Вид избор</th>
-                <th>Брой обвинени</th>
+                <th>Обвиняеми <br><small>име/образование/професия</th>
                 <th>Цена на глас</th>
                 <th>В полза на</th>
                 <th>Место</th>

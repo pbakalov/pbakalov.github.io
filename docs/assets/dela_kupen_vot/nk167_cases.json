@@ -3763,7 +3763,7 @@
     "judgment_date": "14.03.2023",
     "crime_date": "14.09.2022",
     "election": {
-      "type": "национални",
+      "type": "парламентарни",
       "year": 2022,
       "election_date": "02.10.2022"
     },
@@ -3808,7 +3808,7 @@
     "judgment_date": "15.03.2023",
     "crime_date": "30.09.2022",
     "election": {
-      "type": "национални",
+      "type": "парламентарни",
       "year": 2022,
       "election_date": "02.10.2022"
     },
@@ -3851,7 +3851,7 @@
     "judgment_date": "05.04.2023",
     "crime_date": "31.03.2023",
     "election": {
-      "type": "национални",
+      "type": "парламентарни",
       "year": 2023,
       "election_date": "02.04.2023"
     },
@@ -3895,7 +3895,7 @@
     "judgment_date": "18.04.2023",
     "crime_date": "02.04.2023",
     "election": {
-      "type": "национални",
+      "type": "парламентарни",
       "year": 2023,
       "election_date": "02.04.2023"
     },
@@ -3932,7 +3932,7 @@
     "judgment_date": "26.04.2023",
     "crime_date": "02.04.2023",
     "election": {
-      "type": "национални",
+      "type": "парламентарни",
       "year": 2023,
       "election_date": "02.04.2023"
     },
@@ -3970,7 +3970,7 @@
     "judgment_date": "16.05.2023",
     "crime_date": "02.04.2023",
     "election": {
-      "type": "национални",
+      "type": "парламентарни",
       "year": 2023,
       "election_date": "02.04.2023"
     },
@@ -4009,7 +4009,7 @@
     "judgment_date": "10.07.2023",
     "crime_date": "02.04.2023",
     "election": {
-      "type": "национални",
+      "type": "парламентарни",
       "year": 2023,
       "election_date": "02.04.2023"
     },
@@ -4053,7 +4053,7 @@
     "judgment_date": "05.01.2024",
     "crime_date": "02.04.2023",
     "election": {
-      "type": "национални",
+      "type": "парламентарни",
       "year": 2023,
       "election_date": "02.04.2023"
     },
@@ -4097,7 +4097,7 @@
     "judgment_date": "28.02.2024",
     "crime_date": "04.04.2021",
     "election": {
-      "type": "национални",
+      "type": "парламентарни",
       "year": 2021,
       "election_date": "04.04.2021"
     },
@@ -4141,7 +4141,7 @@
     "judgment_date": "09.04.2024",
     "crime_date": "02.04.2023",
     "election": {
-      "type": "национални",
+      "type": "парламентарни",
       "year": 2023,
       "election_date": "02.04.2023"
     },
@@ -4185,7 +4185,7 @@
     "judgment_date": "28.06.2024",
     "crime_date": "02.04.2023",
     "election": {
-      "type": "национални",
+      "type": "парламентарни",
       "year": 2023,
       "election_date": "02.04.2023"
     },
@@ -4220,23 +4220,37 @@
       "year": 2023
     },
     "judgment_date": "13.11.2024",
-    "crime_date": "11.07.2021",
+    "crime_date": "27.10.2019",
     "election": {
-      "type": "национални",
-      "year": 2021,
-      "election_date": "11.07.2021"
+      "type": "местни",
+      "year": 2019,
+      "election_date": "27.10.2019"
     },
     "accused": {
-      "count": 2,
+      "count": 4,
       "details": [
         {
+          "name": "П. А. Р.",
           "education": "висше образование",
           "occupation": "безработен",
           "marital_status": "женен"
         },
         {
+          "name": "А. П. А.",
           "education": "висше образование",
           "occupation": "управител",
+          "marital_status": "неженен"
+        },
+        {
+          "name": "Б. А. М.",
+          "education": "начално образование",
+          "occupation": "озеленител",
+          "marital_status": "женен"
+        },
+        {
+          "name": "Д. Х. П.",
+          "education": "средно образование",
+          "occupation": "охранител",
           "marital_status": "неженен"
         }
       ]
@@ -4248,16 +4262,428 @@
     },
     "beneficiary": {
       "party": "ГЕРБ",
-      "candidate": "М. Г.а Р.",
+      "candidate": "Милена Рангелова (ГЕРБ)",
       "position": "кмет на Община Симеоновград"
     },
     "location": "гр. Симеоновград",
     "vote_sellers_mentioned": {
-      "count": 15
+      "count": "20+"
     },
-    "verdict": "виновен",
-    "punishment": "1 година 3 месеца лишаване от свобода (отложено 3 години) + 10,000 BGN глоба",
+    "verdict": "4 виновни",
+    "punishment": "П. А. Р.: 1 г. 3 м. лишаване от свобода (отложено 3 г.) + 10,000 лв. | А. П. А.: 1 г. 3 м. лишаване от свобода (отложено 3 г.) + 10,000 лв. | Б. А. М.: 1 г. 1 м. лишаване от свобода (отложено 3 г.) + 10,000 лв. | Д. Х. П.: 1 г. лишаване от свобода (отложено 3 г.) + 10,000 лв.",
     "penal_code_article": "чл. 167, ал. 2 и ал. 4 НК",
     "verdict_type": "trial_verdict"
+  },
+  {
+    "file_path": "2023/2024-08-07_sofia_vnohd_3351_2023_resenie.pdf",
+    "case_number": {
+      "number": "3351",
+      "type": "ВНОХД",
+      "court": "Софийски градски съд",
+      "year": 2023
+    },
+    "judgment_date": "02.08.2024",
+    "election": {
+      "type": "национални",
+      "year": 2021,
+      "election_date": "04.04.2021"
+    },
+    "accused": {
+      "count": 2,
+      "details": [
+        {
+          "education": "средно техническо",
+          "occupation": "безработен",
+          "marital_status": "разведен"
+        },
+        {
+          "education": "средно",
+          "occupation": "управител на ТД",
+          "marital_status": "женен"
+        }
+      ]
+    },
+    "vote_incentive": {
+      "price_per_vote": "50",
+      "currency": "BGN"
+    },
+    "beneficiary": {
+      "party": "Републиканци за България",
+      "party_full": "Республиканци за България",
+      "candidate": "н.д.",
+      "position": "н.д."
+    },
+    "location": "жк Люлин, гр. София",
+    "vote_sellers_mentioned": {
+      "count": 1
+    },
+    "verdict": "1 виновен, 1 невиновен",
+    "punishment": "виновния: 1 година лишаване от свобода (отложено за 3 години) + 10,000 BGN глоба",
+    "article": "чл. 167, ал. 2 и ал. 3 НК",
+    "crime_date": "02.04.2021",
+    "penal_code_article": "чл. 167, ал. 2 и ал. 3 НК",
+    "verdict_type": "appeal_verdict"
+  },
+  {
+    "file_path": "2023/2023-10-19_sofiaAPP_vnohd_780_2023_resenie.pdf",
+    "case_number": {
+      "number": "780",
+      "type": "ВНОХД",
+      "court": "Апелативен съд - София",
+      "year": 2023
+    },
+    "judgment_date": "19.10.2023",
+    "election": {
+      "type": "местни",
+      "year": 2019,
+      "election_date": "03.11.2019"
+    },
+    "accused": {
+      "count": 1,
+      "details": [
+        {
+          "education": "средно",
+          "occupation": "кмет",
+          "marital_status": "живее със жена"
+        }
+      ]
+    },
+    "vote_incentive": {
+      "price_per_vote": "20",
+      "currency": "BGN"
+    },
+    "beneficiary": {
+      "party": "БСП за България",
+      "party_full": "Булгарска социалистическа партия",
+      "candidate": "С. Е. С.",
+      "position": "кмет"
+    },
+    "location": "редактирано",
+    "vote_sellers_mentioned": {
+      "count": 2
+    },
+    "verdict": "невиновен",
+    "punishment": "невиновен",
+    "article": "чл. 167, ал. 2 НК",
+    "crime_date": "03.11.2019",
+    "penal_code_article": "чл. 167, ал. 2 НК",
+    "verdict_type": "appeal_verdict"
+  },
+  {
+    "file_path": "2023/2023-11-30_blagoevgrad_vnohd_1166_2023_resenie.pdf",
+    "case_number": {
+      "number": "1166",
+      "type": "ВНОХД",
+      "court": "Окръжен съд - Благоевград",
+      "year": 2023
+    },
+    "judgment_date": "29.11.2023",
+    "election": {
+      "type": "местни",
+      "year": 2019,
+      "election_date": "27.10.2019"
+    },
+    "accused": {
+      "count": 1,
+      "details": [
+        {
+          "education": "н.д.",
+          "occupation": "работник",
+          "marital_status": "омъжена"
+        }
+      ]
+    },
+    "vote_incentive": {
+      "price_per_vote": "редактирано",
+      "currency": "BGN"
+    },
+    "beneficiary": {
+      "party": "редактирано",
+      "party_full": "редактирано",
+      "candidate": "редактирано",
+      "position": "общински съветник"
+    },
+    "location": "гр. Благоевград",
+    "vote_sellers_mentioned": {
+      "count": 3
+    },
+    "verdict": "невиновен",
+    "punishment": "невиновен",
+    "article": "чл. 167, ал. 2 НК",
+    "crime_date": "20.09.2019",
+    "penal_code_article": "чл. 167, ал. 2 НК",
+    "verdict_type": "appeal_verdict"
+  },
+  {
+    "file_path": "2023/2023-04-20_sliven_vnohd_110_2023_resenie.pdf",
+    "case_number": {
+      "number": "110",
+      "type": "ВНОХД",
+      "court": "Окръжен съд - Сливен",
+      "year": 2023
+    },
+    "judgment_date": "20.04.2023",
+    "election": {
+      "type": "национални",
+      "year": 2021,
+      "election_date": "04.04.2021"
+    },
+    "accused": {
+      "count": 1,
+      "details": [
+        {
+          "education": "н.д.",
+          "occupation": "пенсионер",
+          "marital_status": "н.д."
+        }
+      ]
+    },
+    "vote_incentive": {
+      "price_per_vote": "20",
+      "currency": "BGN"
+    },
+    "beneficiary": {
+      "party": "ДПС",
+      "party_full": "Движение за права и свободи",
+      "candidate": "н.д.",
+      "position": "н.д."
+    },
+    "location": "гр. Нова Загора",
+    "vote_sellers_mentioned": {
+      "count": 5
+    },
+    "verdict": "невиновен (върнато за ново разглеждане)",
+    "punishment": "невиновен",
+    "article": "чл. 167, ал. 2 НК",
+    "crime_date": "04.04.2021",
+    "penal_code_article": "чл. 167, ал. 2 НК",
+    "verdict_type": "appeal_returned_for_retrial"
+  },
+  {
+    "file_path": "2023/2024-02-02_sofia_vnohd_6668_2023_resenie.pdf",
+    "case_number": {
+      "number": "6668",
+      "type": "ВНОХД",
+      "court": "Софийски градски съд",
+      "year": 2023
+    },
+    "judgment_date": "01.02.2024",
+    "election": {
+      "type": "национални",
+      "year": 2021,
+      "election_date": "11.07.2021"
+    },
+    "accused": {
+      "count": 1,
+      "details": [
+        {
+          "name": "К. С. С.",
+          "education": "висше",
+          "occupation": "пенсионерка",
+          "marital_status": "омъжена"
+        }
+      ]
+    },
+    "vote_incentive": {
+      "price_per_vote": "30",
+      "currency": "BGN",
+      "description": "3 x 10 лева банкноти"
+    },
+    "beneficiary": {
+      "party": "ДПС",
+      "party_full": "Движение за права и свободи",
+      "candidate": "редактирано",
+      "position": "н.д."
+    },
+    "location": "гр. София, АР Лозенец",
+    "vote_sellers_mentioned": {
+      "count": 1
+    },
+    "verdict": "виновна",
+    "punishment": "3 месеца лишаване от свобода (отложено за 3 години)",
+    "article": "чл. 167, ал. 2 НК",
+    "crime_date": "11.07.2021",
+    "penal_code_article": "чл. 167, ал. 2 НК",
+    "verdict_type": "appeal_verdict"
+  },
+  {
+    "file_path": "2023/2023-07-25_pernik_vnohd_168_2023_resenie.pdf",
+    "case_number": {
+      "number": "168",
+      "type": "ВНОХД",
+      "court": "Окръжен съд - Перник",
+      "year": 2023
+    },
+    "judgment_date": "25.07.2023",
+    "election": {
+      "type": "национални",
+      "year": 2022,
+      "election_date": "02.10.2022"
+    },
+    "accused": {
+      "count": 1,
+      "details": [
+        {
+          "education": "н.д.",
+          "occupation": "пенсионер",
+          "marital_status": "н.д."
+        }
+      ]
+    },
+    "vote_incentive": {
+      "price_per_vote": "50",
+      "currency": "BGN"
+    },
+    "beneficiary": {
+      "party": "редактирано",
+      "party_full": "редактирано",
+      "candidate": "н.д.",
+      "position": "н.д."
+    },
+    "location": "редактирано",
+    "vote_sellers_mentioned": {
+      "count": 3
+    },
+    "verdict": "невиновен",
+    "punishment": "невиновен",
+    "article": "чл. 167, ал. 2 НК",
+    "crime_date": "02.10.2022",
+    "penal_code_article": "чл. 167, ал. 2 НК",
+    "verdict_type": "appeal_verdict"
+  },
+  {
+    "file_path": "2023/2024-04-02_haskovo_vnohd_313_2023_resenie.pdf",
+    "case_number": {
+      "number": "313",
+      "type": "ВНОХД",
+      "court": "Окръжен съд - Хасково",
+      "year": 2023
+    },
+    "judgment_date": "01.04.2024",
+    "election": {
+      "type": "национални",
+      "year": 2021,
+      "election_date": "11.07.2021"
+    },
+    "accused": {
+      "count": 1,
+      "details": [
+        {
+          "education": "н.д.",
+          "occupation": "работник",
+          "marital_status": "н.д."
+        }
+      ]
+    },
+    "vote_incentive": {
+      "price_per_vote": "30-60",
+      "currency": "BGN"
+    },
+    "beneficiary": {
+      "party": "редактирано",
+      "party_full": "редактирано",
+      "candidate": "н.д.",
+      "position": "н.д."
+    },
+    "location": "редактирано",
+    "vote_sellers_mentioned": {
+      "count": 8
+    },
+    "verdict": "невиновен",
+    "punishment": "невиновен",
+    "article": "чл. 167, ал. 2 НК",
+    "crime_date": "юли 2021",
+    "penal_code_article": "чл. 167, ал. 2 НК",
+    "verdict_type": "appeal_verdict"
+  },
+  {
+    "file_path": "2023/2024-03-25_yambol_vnohd_222_2023_resenie.pdf",
+    "case_number": {
+      "number": "222",
+      "type": "ВНОХД",
+      "court": "Окръжен съд - Ямбол",
+      "year": 2023
+    },
+    "judgment_date": "25.03.2024",
+    "election": {
+      "type": "национални",
+      "year": 2023,
+      "election_date": "02.04.2023"
+    },
+    "accused": {
+      "count": 1,
+      "details": [
+        {
+          "education": "н.д.",
+          "occupation": "н.д.",
+          "marital_status": "н.д."
+        }
+      ]
+    },
+    "vote_incentive": {
+      "price_per_vote": "50",
+      "currency": "BGN"
+    },
+    "beneficiary": {
+      "party": "ДПС",
+      "party_full": "Движение за права и свободи",
+      "candidate": "н.д.",
+      "position": "н.д."
+    },
+    "location": "гр. Ямбол",
+    "vote_sellers_mentioned": {
+      "count": 2
+    },
+    "verdict": "невиновен",
+    "punishment": "невиновен",
+    "article": "чл. 167, ал. 2 НК",
+    "crime_date": "02.04.2023",
+    "penal_code_article": "чл. 167, ал. 2 НК",
+    "verdict_type": "appeal_verdict"
+  },
+  {
+    "file_path": "2023/2024-02-15_yambol_vnohd_439_2023_resenie.pdf",
+    "case_number": {
+      "number": "439",
+      "type": "ВНОХД",
+      "court": "Окръжен съд - Ямбол",
+      "year": 2023
+    },
+    "judgment_date": "14.02.2024",
+    "election": {
+      "type": "местни",
+      "year": 2023,
+      "election_date": "редактирано"
+    },
+    "accused": {
+      "count": 1,
+      "details": [
+        {
+          "education": "н.д.",
+          "occupation": "н.д.",
+          "marital_status": "н.д."
+        }
+      ]
+    },
+    "vote_incentive": {
+      "price_per_vote": "50",
+      "currency": "BGN"
+    },
+    "beneficiary": {
+      "party": "ДПС",
+      "party_full": "Движение за права и свободи",
+      "candidate": "н.д.",
+      "position": "н.д."
+    },
+    "location": "гр. Ямбол",
+    "vote_sellers_mentioned": {
+      "count": 2
+    },
+    "verdict": "невиновен",
+    "punishment": "невиновен",
+    "article": "чл. 167, ал. 2 НК",
+    "crime_date": "септември-октомври 2023",
+    "penal_code_article": "чл. 167, ал. 2 НК",
+    "verdict_type": "appeal_verdict"
   }
 ]

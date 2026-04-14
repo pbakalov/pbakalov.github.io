@@ -2422,9 +2422,9 @@
     "judgment_date": "01.10.2022",
     "crime_date": "25.09.2022",
     "election": {
-      "type": "местни",
+      "type": "парламентарни",
       "year": 2022,
-      "election_date": "25.09.2022"
+      "election_date": "02.10.2022"
     },
     "accused": {
       "count": 1,
@@ -2707,7 +2707,7 @@
     "judgment_date": "17.11.2022",
     "crime_date": "19-30.09.2022",
     "election": {
-      "type": "местни",
+      "type": "парламентарни",
       "year": 2022,
       "election_date": "02.10.2022"
     },
@@ -2748,7 +2748,7 @@
     "judgment_date": "15.03.2023",
     "crime_date": "19-30.09.2022",
     "election": {
-      "type": "местни",
+      "type": "парламентарни",
       "year": 2022,
       "election_date": "02.10.2022"
     },
@@ -4284,7 +4284,7 @@
     },
     "judgment_date": "02.08.2024",
     "election": {
-      "type": "национални",
+      "type": "парламентарни",
       "year": 2021,
       "election_date": "04.04.2021"
     },
@@ -4424,7 +4424,7 @@
     },
     "judgment_date": "20.04.2023",
     "election": {
-      "type": "национални",
+      "type": "парламентарни",
       "year": 2021,
       "election_date": "04.04.2021"
     },
@@ -4469,7 +4469,7 @@
     },
     "judgment_date": "01.02.2024",
     "election": {
-      "type": "национални",
+      "type": "парламентарни",
       "year": 2021,
       "election_date": "11.07.2021"
     },
@@ -4516,7 +4516,7 @@
     },
     "judgment_date": "25.07.2023",
     "election": {
-      "type": "национални",
+      "type": "парламентарни",
       "year": 2022,
       "election_date": "02.10.2022"
     },
@@ -4561,7 +4561,7 @@
     },
     "judgment_date": "01.04.2024",
     "election": {
-      "type": "национални",
+      "type": "парламентарни",
       "year": 2021,
       "election_date": "11.07.2021"
     },
@@ -4606,7 +4606,7 @@
     },
     "judgment_date": "25.03.2024",
     "election": {
-      "type": "национални",
+      "type": "парламентарни",
       "year": 2023,
       "election_date": "02.04.2023"
     },

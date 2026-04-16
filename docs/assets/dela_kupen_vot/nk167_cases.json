@@ -4,7 +4,8 @@
     "case_number": {
       "number": "66",
       "type": "НОХД",
-      "court": "Айтоски районен съд"
+      "court": "Айтоски районен съд",
+      "year": "2017"
     },
     "judgment_date": "23.02.2017",
     "election": {
@@ -50,7 +51,8 @@
     "case_number": {
       "number": "139",
       "type": "НОХД",
-      "court": "Мездренски районен съд"
+      "court": "Мездренски районен съд",
+      "year": 2017
     },
     "judgment_date": "24.03.2017",
     "election": {
@@ -97,7 +99,8 @@
     "case_number": {
       "number": "136",
       "type": "НОХД",
-      "court": "Айтоски районен съд"
+      "court": "Айтоски районен съд",
+      "year": 2017
     },
     "judgment_date": "28.03.2017",
     "election": {
@@ -143,7 +146,8 @@
     "case_number": {
       "number": "787",
       "type": "НОХД",
-      "court": "Плевенски районен съд"
+      "court": "Плевенски районен съд",
+      "year": 2017
     },
     "judgment_date": "28.03.2017",
     "election": {
@@ -189,7 +193,8 @@
     "case_number": {
       "number": "786",
       "type": "НОХД",
-      "court": "Плевенски районен съд"
+      "court": "Плевенски районен съд",
+      "year": 2017
     },
     "judgment_date": "28.03.2017",
     "election": {
@@ -235,7 +240,8 @@
     "case_number": {
       "number": "1495",
       "type": "НОХД",
-      "court": "Варненски районен съд"
+      "court": "Варненски районен съд",
+      "year": 2017
     },
     "judgment_date": "03.04.2017",
     "election": {
@@ -281,7 +287,8 @@
     "case_number": {
       "number": "878",
       "type": "НОХД",
-      "court": "Плевенски районен съд"
+      "court": "Плевенски районен съд",
+      "year": 2017
     },
     "judgment_date": "06.04.2017",
     "election": {
@@ -327,7 +334,8 @@
     "case_number": {
       "number": "75",
       "type": "НОХД",
-      "court": "Панагюрски районен съд"
+      "court": "Панагюрски районен съд",
+      "year": 2017
     },
     "judgment_date": "07.04.2017",
     "election": {
@@ -374,7 +382,8 @@
     "case_number": {
       "number": "98",
       "type": "НОХД",
-      "court": "Средецки районен съд"
+      "court": "Средецки районен съд",
+      "year": 2017
     },
     "judgment_date": "10.04.2017",
     "election": {
@@ -426,7 +435,8 @@
     "case_number": {
       "number": "872",
       "type": "НОХД",
-      "court": "Плевенски районен съд"
+      "court": "Плевенски районен съд",
+      "year": 2017
     },
     "judgment_date": "11.04.2017",
     "election": {
@@ -472,7 +482,8 @@
     "case_number": {
       "number": "2462",
       "type": "НОХД",
-      "court": "Бургаски районен съд"
+      "court": "Бургаски районен съд",
+      "year": 2017
     },
     "judgment_date": "20.06.2017",
     "election": {
@@ -518,7 +529,8 @@
     "case_number": {
       "number": "877",
       "type": "НОХД",
-      "court": "Сливенски районен съд"
+      "court": "Сливенски районен съд",
+      "year": 2017
     },
     "judgment_date": "03.07.2017",
     "election": {
@@ -562,7 +574,8 @@
     "case_number": {
       "number": "939",
       "type": "НОХД",
-      "court": "Добрички районен съд"
+      "court": "Добрички районен съд",
+      "year": 2017
     },
     "judgment_date": "24.07.2017",
     "election": {
@@ -606,7 +619,8 @@
     "case_number": {
       "number": "109",
       "type": "НОХД",
-      "court": "Козлодуйски районен съд"
+      "court": "Козлодуйски районен съд",
+      "year": 2017
     },
     "judgment_date": "09.05.2017",
     "election": {
@@ -651,7 +665,8 @@
     "case_number": {
       "number": "1086",
       "type": "НОХД",
-      "court": "Дупнишки районен съд"
+      "court": "Дупнишки районен съд",
+      "year": "2017"
     },
     "judgment_date": "21.02.2018",
     "election": {
@@ -699,7 +714,8 @@
     "case_number": {
       "number": "160",
       "type": "ВНОХД",
-      "court": "Ямболски окръжен съд"
+      "court": "Ямболски окръжен съд",
+      "year": "2017"
     },
     "judgment_date": "26.10.2017",
     "election": {
@@ -743,7 +759,8 @@
     "case_number": {
       "number": "172",
       "type": "ВНОХД",
-      "court": "Кюстендилски окръжен съд"
+      "court": "Кюстендилски окръжен съд",
+      "year": "2017"
     },
     "judgment_date": "29.06.2017",
     "election": {
@@ -792,7 +809,8 @@
     "case_number": {
       "number": "1131",
       "type": "НОХД",
-      "court": "Ямболски районен съд"
+      "court": "Ямболски районен съд",
+      "year": "2017"
     },
     "judgment_date": "06.06.2019",
     "election": {
@@ -838,7 +856,8 @@
     "case_number": {
       "number": "543",
       "type": "НОХД",
-      "court": "Провадийски районен съд"
+      "court": "Провадийски районен съд",
+      "year": 2017
     },
     "judgment_date": "10.09.2019",
     "election": {
@@ -4685,5 +4704,396 @@
     "crime_date": "септември-октомври 2023",
     "penal_code_article": "чл. 167, ал. 2 НК",
     "verdict_type": "appeal_verdict"
+  },
+  {
+    "file_path": "2016/2016-02-02_vtrnovo_nohd_114_2016_sporazumenie.html",
+    "case_number": {
+      "number": "114",
+      "type": "НОХД",
+      "court": "Районен съд - Велико Търново",
+      "year": "2016"
+    },
+    "judgment_date": "02.02.2016",
+    "crime_date": "22.10.2015-24.10.2015",
+    "election": {
+      "type": "местни",
+      "year": 2015,
+      "election_date": "25.10.2015"
+    },
+    "accused": {
+      "count": 1,
+      "details": [
+        {
+          "education": "основно образование",
+          "occupation": "безработен",
+          "marital_status": "разведен"
+        }
+      ]
+    },
+    "vote_incentive": {
+      "price_per_vote": 40,
+      "currency": "BGN",
+      "description": "40 BGN по двама"
+    },
+    "beneficiary": {
+      "party": "Реформаторски блок",
+      "candidate": "неуточнен",
+      "position": "неуточнена"
+    },
+    "location": "с. Самоводене, общ. Велико Търново",
+    "vote_sellers_mentioned": {
+      "count": 2
+    },
+    "verdict": "виновен",
+    "punishment": "11 месеца лишаване от свобода (отложено за 3 години и 11 месеца)",
+    "penal_code_article": "чл. 167, ал.2 и ал. 3 НК",
+    "verdict_type": "споразумение"
+  },
+  {
+    "file_path": "2016/2016-05-05_etropole_nohd_80_2016_sporazumenie.html",
+    "case_number": {
+      "number": "80",
+      "type": "НОХД",
+      "court": "Районен съд - Етрополе",
+      "year": "2016"
+    },
+    "judgment_date": "05.05.2016",
+    "crime_date": "18.10.2015-31.10.2015",
+    "election": {
+      "type": "местни",
+      "year": 2015,
+      "election_date": "25.10.2015-01.11.2015"
+    },
+    "accused": {
+      "count": 1,
+      "details": [
+        {
+          "education": "средно-специално образование",
+          "occupation": "оператор",
+          "marital_status": "разведена"
+        }
+      ]
+    },
+    "vote_incentive": {
+      "price_per_vote": "25-50",
+      "currency": "BGN",
+      "description": "различни суми"
+    },
+    "beneficiary": {
+      "party": "Местна коалиция Етрополе",
+      "candidate": "Димитър Радославов Димитров",
+      "position": "кандидат за кмет"
+    },
+    "location": "гр. Правец и гр. Етрополе, обл. София",
+    "vote_sellers_mentioned": {
+      "count": 6
+    },
+    "verdict": "виновен",
+    "punishment": "5 месеца лишаване от свобода (отложено за 3 години)",
+    "penal_code_article": "чл.167 ал.2 и ал. 4 НК",
+    "verdict_type": "споразумение"
+  },
+  {
+    "file_path": "2016/2016-09-27_dryanov_nohd_99_2016_sporazumenie.html",
+    "case_number": {
+      "number": "99",
+      "type": "НОХД",
+      "court": "Дряновски районен съд",
+      "year": "2016"
+    },
+    "judgment_date": "27.09.2016",
+    "crime_date": "30.10.2015",
+    "election": {
+      "type": "местни",
+      "year": 2015,
+      "election_date": "01.11.2015"
+    },
+    "accused": {
+      "count": 2,
+      "details": [
+        {
+          "education": "висше образование",
+          "occupation": "продавач-консултант",
+          "marital_status": "неомъжена"
+        },
+        {
+          "education": "средно образование",
+          "occupation": "управител",
+          "marital_status": "женен"
+        }
+      ]
+    },
+    "vote_incentive": {
+      "price_per_vote": "20.50-13.20",
+      "currency": "BGN",
+      "description": "хранителни продукти и напитки (стойност 33.70 BGN)"
+    },
+    "beneficiary": {
+      "party": "неуточнена",
+      "candidate": "И.И.Н.",
+      "position": "кандидат за кмет"
+    },
+    "location": "гр. Дряново, ж.к. Априлци",
+    "vote_sellers_mentioned": {
+      "count": 2
+    },
+    "verdict": "виновен",
+    "punishment": "6 месеца лишаване от свобода (отложено за 3 години) - всеки подсъдим",
+    "penal_code_article": "чл. 167, ал. 5 вр. ал. 2 пр. 2 НК",
+    "verdict_type": "споразумение"
+  },
+  {
+    "file_path": "2016/2016-10-12_pernik_nohd_1108_2016_prisuda.html",
+    "case_number": {
+      "number": "1108",
+      "type": "НОХД",
+      "court": "Пернишки районен съд",
+      "year": "2016"
+    },
+    "judgment_date": "12.10.2016",
+    "crime_date": "24.10.2015",
+    "election": {
+      "type": "местни",
+      "year": 2015,
+      "election_date": "25.10.2015"
+    },
+    "accused": {
+      "count": 1,
+      "details": [
+        {
+          "prior_convictions": "осъждан"
+        }
+      ]
+    },
+    "vote_incentive": {
+      "price_per_vote": "40-50",
+      "currency": "BGN"
+    },
+    "beneficiary": {
+      "party": "неуточнена",
+      "candidate": "К.Х.",
+      "position": "неуточнена"
+    },
+    "location": "село Студена, община Перник",
+    "vote_sellers_mentioned": {
+      "count": 1
+    },
+    "verdict": "невиновен",
+    "punishment": "оправдание",
+    "penal_code_article": "чл. 167, ал. 2 НК",
+    "verdict_type": "присъда (оправдание)"
+  },
+  {
+    "file_path": "2016/2016-10-31_cherven_nohd_175_2016_prisuda.html",
+    "case_number": {
+      "number": "175",
+      "type": "НОХД",
+      "court": "Червенобрежкият районен съд",
+      "year": "2016"
+    },
+    "judgment_date": "31.10.2016",
+    "crime_date": "24.10.2015 и 30.10.2015",
+    "election": {
+      "type": "местни",
+      "year": 2015,
+      "election_date": "25.10.2015 и 01.11.2015"
+    },
+    "accused": {
+      "count": 1,
+      "details": [
+        {
+          "education": "средно образование",
+          "occupation": "безработен",
+          "marital_status": "неженен"
+        }
+      ]
+    },
+    "vote_incentive": {
+      "price_per_vote": "90",
+      "currency": "BGN",
+      "description": "парична сума 90 BGN, плюс опит за предложение на 10-30 BGN на 98 лица"
+    },
+    "beneficiary": {
+      "party": "ГОР",
+      "candidate": "инженер Д.Н.В.",
+      "position": "кандидат за кмет"
+    },
+    "location": "с. Горник, обл. Плевен",
+    "vote_sellers_mentioned": {
+      "count": "98+"
+    },
+    "verdict": "виновен по първия пункт, невиновен по втория",
+    "punishment": "1 година лишаване от свобода (отложено за 3 години)",
+    "penal_code_article": "чл. 167, ал.2 НК и чл. 18 НК (опит)",
+    "verdict_type": "присъда"
+  },
+  {
+    "file_path": "2016/2016-11-24_sliven_nohd_1538_2016_sporazumenie.html",
+    "case_number": {
+      "number": "1538",
+      "type": "НОХД",
+      "court": "Сливенският районен съд",
+      "year": "2016"
+    },
+    "judgment_date": "24.11.2016",
+    "crime_date": "октомври-01.11.2015",
+    "election": {
+      "type": "местни",
+      "year": 2015,
+      "election_date": "01.11.2015"
+    },
+    "accused": {
+      "count": 3,
+      "details": [
+        {
+          "name_init": "Г.Й.В."
+        },
+        {
+          "name_init": "И.Г.Й."
+        },
+        {
+          "name_init": "Б.Г.Й."
+        }
+      ]
+    },
+    "vote_incentive": {
+      "description": "различни суми в BGN (20-120)"
+    },
+    "beneficiary": {
+      "party": "БСП",
+      "candidate": "П.С.Д.",
+      "position": "кандидат"
+    },
+    "location": "село Крушаре, общ. Сливен",
+    "vote_sellers_mentioned": {
+      "count": "7+"
+    },
+    "verdict": "виновен",
+    "punishment": "7, 5, и 5 месеца лишаване от свобода (отложено за 3 години) - всеки подсъдим",
+    "penal_code_article": "чл. 167, ал. 2 НК",
+    "verdict_type": "споразумение"
+  },
+  {
+    "file_path": "2016/2016-11-25_oryahovo_nohd_126_2016_sporazumenie.html",
+    "case_number": {
+      "number": "126",
+      "type": "НОХД",
+      "court": "Оряховският районен съд",
+      "year": "2016"
+    },
+    "judgment_date": "25.11.2016",
+    "crime_date": "20.10.2015-25.10.2015",
+    "election": {
+      "type": "местни",
+      "year": 2015,
+      "election_date": "25.10.2015"
+    },
+    "accused": {
+      "count": 1,
+      "details": [
+        {
+          "education": "основно образование",
+          "occupation": "безработен",
+          "marital_status": "женен",
+          "prior_convictions": "осъждан"
+        }
+      ]
+    },
+    "vote_incentive": {
+      "price_per_vote": "15-30",
+      "currency": "BGN",
+      "description": "135 BGN общо за 9 лица"
+    },
+    "beneficiary": {
+      "party": "неуточнена",
+      "candidate": "Х.Т.П.",
+      "position": "кандидат за кмет"
+    },
+    "location": "с. Крушовица, общ. Мизия, обл. Враца",
+    "vote_sellers_mentioned": {
+      "count": 9
+    },
+    "verdict": "виновен",
+    "punishment": "9 месеца лишаване от свобода при строг режим",
+    "penal_code_article": "чл. 167, ал. 2 НК",
+    "verdict_type": "споразумение"
+  },
+  {
+    "file_path": "2016/2016-12-08_sofia_nohd_4090_2016_sporazumenie.html",
+    "case_number": {
+      "number": "4090",
+      "type": "НОХД",
+      "court": "Софийски градски съд",
+      "year": "2016"
+    },
+    "judgment_date": "08.12.2016",
+    "crime_date": "20.10.2015",
+    "election": {
+      "type": "местни",
+      "year": 2015,
+      "election_date": "25.10.2015"
+    },
+    "accused": {
+      "count": 1
+    },
+    "vote_incentive": {
+      "price_per_vote": 15,
+      "currency": "BGN"
+    },
+    "beneficiary": {
+      "party": "неуточнена"
+    },
+    "location": "не уточнена",
+    "vote_sellers_mentioned": {
+      "count": 2
+    },
+    "verdict": "виновен",
+    "punishment": "8 месеца лишаване от свобода (отложено за 3 години)",
+    "penal_code_article": "чл. 167, ал. 2 НК",
+    "verdict_type": "споразумение"
+  },
+  {
+    "file_path": "2016/2017-06-27_sofia_nohd_3743_2016_prisuda.html",
+    "case_number": {
+      "number": "3743",
+      "type": "НОХД",
+      "court": "Софийски градски съд",
+      "year": "2016"
+    },
+    "judgment_date": "27.06.2017",
+    "crime_date": "септември-октомври 2015",
+    "election": {
+      "type": "местни",
+      "year": 2015,
+      "election_date": "25.10.2015"
+    },
+    "accused": {
+      "count": 1,
+      "details": [
+        {
+          "education": "средно специално образование",
+          "occupation": "кмет",
+          "marital_status": "неженен"
+        }
+      ]
+    },
+    "vote_incentive": {
+      "price_per_vote": 40,
+      "currency": "BGN",
+      "description": "200 BGN общо"
+    },
+    "beneficiary": {
+      "party": "За Х.",
+      "candidate": "самия подсъдим",
+      "position": "кандидат за кмет"
+    },
+    "location": "село У., регион Х.",
+    "vote_sellers_mentioned": {
+      "count": "5-7"
+    },
+    "verdict": "виновен",
+    "punishment": "2 години лишаване от свобода + 10000 BGN глоба (отложено за 4 години) + забрана да заема изборни длъжности за 4 години",
+    "penal_code_article": "чл. 167, ал. 4 и ал. 2 НК",
+    "verdict_type": "присъда"
   }
 ]
